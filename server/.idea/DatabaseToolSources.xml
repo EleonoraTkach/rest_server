@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DatabaseToolSources">
+    <data-source name="192.168.56.50" uuid="15618b2b-69ea-40a0-955b-530391157a3c" type="POSTGRES">
+      <base-info connect-type="DB_DEFAULT" product="PostgreSQL" version="15.4" jdbc-name="PostgreSQL JDBC Driver" jdbc-version="42.6.0" />
+      <user-name>admin01</user-name>
+      <schema-mapping>
+        <introspection-scope>
+          <node negative="1">
+            <node kind="database" qname="quiz" operator="@">
+              <node kind="schema">
+                <name qname="public" />
+              </node>
+            </node>
+          </node>
+        </introspection-scope>
+      </schema-mapping>
+      <url>jdbc:postgresql://192.168.56.50:5432/quiz</url>
+      <remarks />
+      <vm-options />
+      <driver-info id="postgresql" />
+      <ssh-properties enabled="false" />
+      <ssl-config enabled="false">
+        <uuid />
+        <caFile />
+        <clientCertificateFile />
+        <clientKeyFile />
+        <sslMode>REQUIRE</sslMode>
+      </ssl-config>
+    </data-source>
+  </component>
+</project>
