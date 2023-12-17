@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.quiz.controllers.LkStudentController">
+  <tabs>
+    <Tab text="Личный кабинет">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="342.0" prefWidth="605.0">
+               <children>
+                  <Label layoutX="157.0" layoutY="43.0" text="ФИО: " />
+                  <Label layoutX="148.0" layoutY="82.0" text="Логин:" />
+                  <Label layoutX="200.0" layoutY="129.0" prefHeight="18.0" prefWidth="310.0" />
+                  <Label layoutX="30.0" layoutY="124.0" text="Категория пользователя:" />
+                  <TextField fx:id="login" layoutX="198.0" layoutY="78.0" prefHeight="26.0" prefWidth="316.0" />
+                  <TextField fx:id="type" layoutX="198.0" layoutY="120.0" prefHeight="26.0" prefWidth="316.0" text="Студент" />
+                  <TextField fx:id="fio" layoutX="198.0" layoutY="40.0" prefHeight="26.0" prefWidth="315.0" />
+                  <Button fx:id="changeButton" layoutX="64.0" layoutY="294.0" mnemonicParsing="false" onAction="#clickOnChangeButton" text="Редактировать профиль" textFill="WHITE" />
+                  <Label fx:id="oldLabel" layoutX="100.0" layoutY="161.0" text="Новый пароль:" />
+                  <PasswordField fx:id="newPasswordOne" layoutX="195.0" layoutY="157.0" prefHeight="26.0" prefWidth="316.0" />
+                  <Label fx:id="newLabel" layoutX="24.0" layoutY="205.0" text="Повторите пароль ещё раз:" />
+                  <PasswordField fx:id="newPasswordTwo" layoutX="198.0" layoutY="201.0" prefHeight="26.0" prefWidth="316.0" />
+                  <Label fx:id="errorMessage" alignment="CENTER" layoutX="147.0" layoutY="263.0" prefHeight="18.0" prefWidth="306.0" textFill="#e40707" />
+                  <Button fx:id="logOut" layoutX="407.0" layoutY="294.0" mnemonicParsing="false" onAction="#clickOnLogOutButton" text="Выйти из системы" />
+               </children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab text="Назначенные тесты">
+         <content>
+            <ScrollPane prefHeight="200.0" prefWidth="200.0">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="370.0" prefWidth="588.0" />
+              </content>
+            </ScrollPane>
+         </content>
+    </Tab>
+      <Tab text="Результаты тестов">
+         <content>
+            <ScrollPane prefHeight="200.0" prefWidth="200.0">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="331.0" prefWidth="579.0" />
+              </content>
+            </ScrollPane>
+         </content>
+      </Tab>
+  </tabs>
+</TabPane>

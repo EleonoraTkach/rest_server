@@ -72,6 +72,7 @@ public class UserAuthHandler implements HttpHandler {
                         response.put("fullName", list.get(0).getFullName());
                         response.put("role", list.get(0).getRole());
                         response.put("email", list.get(0).getEmail());
+                        response.put("password", list.get(0).getPassword());
                     } else {
                         str = "the administrator did not confirm the account";
                     }
@@ -100,7 +101,9 @@ public class UserAuthHandler implements HttpHandler {
         }
 
 
+
         response.put("message", str);
+
         System.out.println(response);
         System.out.println(rCode);
         byte[] bytes = response.toString().getBytes(StandardCharsets.UTF_8);
