@@ -1,29 +1,20 @@
 package com.example.quiz.objects;
 
 public class User {
+    private Long id;
+    private String fullName;
+    private String email;
+    private String password;
+    private String role;
+    private Boolean is_validated;
 
-
-    public User(Long id, String fullName, String email, String role) {
+    public User(Long id, String fullName, String email, String role,String password) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.role = role;
+        this.password = password;
     }
-
-    private Long id;
-
-
-    private String fullName;
-
-
-    private String email;
-
-
-    private String password;
-
-    private String role;
-
-    private Boolean is_validated;
 
     public void setRole(String role) {
         this.role = role;
@@ -76,6 +67,6 @@ public class User {
     @Override
     public String toString() {
 
-        return this.fullName + " " + this.email+ " " + this.role + " " + this.id;
+        return this.fullName + " " + this.email+ " " + this.role + " " + this.id + " " + this.password;
     }
 }

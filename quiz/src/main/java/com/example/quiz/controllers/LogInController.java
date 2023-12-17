@@ -33,6 +33,8 @@ public class LogInController {
     @FXML
     private Hyperlink logUpLink;
     @FXML
+    private Button logInButton;
+    @FXML
     private void clickOnLogInButton() {
         logInExeption.setText("");
         String strLogin = loginLogIn.getText();
@@ -57,7 +59,7 @@ public class LogInController {
             }
 
             // Получаем ответ от сервера
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(),  "UTF-8"));
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
             String inputLine;
             StringBuffer response = new StringBuffer();
 
@@ -69,7 +71,7 @@ public class LogInController {
             // Выводим ответ от сервера
             System.out.println(response.toString());
             ObjectMapper mapper = new ObjectMapper();
-            String message = response.toString().replaceAll("\\{|}","");
+            String message = response.toString().replaceAll("\\{|}", "");
             String[] pairs = message.split("(, )");
 
 // Создаем Map для хранения пар ключ-значение
@@ -78,15 +80,27 @@ public class LogInController {
 // Разбиваем каждую пару ключ-значение по знаку равно и добавляем в Map
             for (String pair : pairs) {
                 String[] keyValue = pair.split("=");
-                parsedResponse.put("\"" + keyValue[0] + "\"", "\"" + keyValue[1]  + "\"");
+                parsedResponse.put("\"" + keyValue[0] + "\"", "\"" + keyValue[1] + "\"");
             }
             System.out.println(parsedResponse);
             if (parsedResponse.get("\"message\"").equals("\"success\"")) {
-                User user = new User(Long.parseLong(parsedResponse.get("\"id\"").replaceAll("\"","")), parsedResponse.get("\"fullName\""), parsedResponse.get("\"email\""), parsedResponse.get("\"role\""));
+                String path  = "";
+                User user = new User(Long.parseLong(parsedResponse.get("\"id\"").replaceAll("\"", "")), parsedResponse.get("\"fullName\"").replaceAll("\"", ""), parsedResponse.get("\"email\"").replaceAll("\"", ""), parsedResponse.get("\"role\"").replaceAll("\"", ""), parsedResponse.get("\"password\"").replaceAll("\"", ""));
+                if (user.getRole().equals("Преподаватель")) {
+                    path = "lkPrepod.fxml";
+                    LkPrepodController.setUser(user);
+                } else if (user.getRole().equals("Администратор")) {
+                    path = "lkAdmin.fxml";
+                    LkAdminController.setUser(user);
+                } else {
+                    path = "lkStudent.fxml";
+                    LkStudentController.setUser(user);
+                }
+                clickLogIn(path);
                 System.out.println(user.toString());
 
             } else {
-                logInExeption.setText(parsedResponse.get("\"message\"").replaceAll("\"",""));
+                logInExeption.setText(parsedResponse.get("\"message\"").replaceAll("\"", ""));
             }
 
             //System.out.println(user.toString());
@@ -96,34 +110,8 @@ public class LogInController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//        Database dataBase = new Database();
-//        String sql = "SELECT * FROM users WHERE login_user = \'" + strLogin + "\'";
-//        if (dataBase.qwery(sql).equals(strLogin + " " + strPassword)) {
-//            System.out.println("Вход в систему");
-//        } else {
-//            logInExeptiion.setText("Неправильный логин или пароль, попробуйте ещё раз.");
-//        };
-
-
     }
+
     @FXML
     private void clickOnLogUpLink(ActionEvent event) throws IOException{
         try {
@@ -131,6 +119,19 @@ public class LogInController {
             Scene scene = new Scene(fxmlLoader.load(), 500, 450);
             Stage stage = (Stage) logUpLink.getScene().getWindow();;
             stage.setTitle("Регистрация");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    private void clickLogIn(String path) throws IOException{
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path));
+            Scene scene = new Scene(fxmlLoader.load(), 500, 450);
+            Stage stage = (Stage) logInButton.getScene().getWindow();;
+            stage.setTitle("Личный кабинет");
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {

@@ -7,33 +7,30 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
-import org.postgresql.util.PSQLException;
 import ru.quiz.server.entities.User;
 
-import javax.lang.model.type.NullType;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.io.*;
+import javax.persistence.criteria.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 
-public class UserRegisterHandler implements HttpHandler {
-
+public class UserUpdatePasswordHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        exchange.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         String requestMethod = exchange.getRequestMethod();
         String str = "";
         int rCode = 200;
+        HashMap<String, String> response = new HashMap<>();
+
 
         if (requestMethod.equalsIgnoreCase("POST")) {
             ObjectMapper mapper = new ObjectMapper();
@@ -44,25 +41,22 @@ public class UserRegisterHandler implements HttpHandler {
             while ((line = reader.readLine()) != null) {
                 requestBody.append(line);
             }
-            System.out.println(requestBody);
+
             try {
                 User user = mapper.readValue(requestBody.toString(), User.class);
-                System.out.println(user.getEmail());
-                session.save(user);
-                transaction.commit();
+                User userNew = session.get(User.class, user.getId());
+                userNew.setPassword(user.getPassword());
+                session.update(userNew);
                 str = "success";
-            } catch (ConstraintViolationException e) {
-                if (transaction != null) {
-                    transaction.rollback();
-                }
-                rCode = 400;
-                str = "user with this login is exists";
+                System.out.println(userNew.getPassword() + "");
+                response.put("password", userNew.getPassword());
+                transaction.commit();
             } catch (Exception e){
                 if (transaction != null) {
                     transaction.rollback();
                 }
                 rCode = 400;
-                str = "all fields must be filled in";
+                str = e.getMessage();
             } finally {
                 if (session != null) {
                     session.close();
@@ -71,6 +65,7 @@ public class UserRegisterHandler implements HttpHandler {
 
             }
 
+
         } else {
             session.close();
             sessionFactory.close();
@@ -78,9 +73,12 @@ public class UserRegisterHandler implements HttpHandler {
             str = "method of requrest is wrong";
         }
 
-        HashMap<String, String> response = new HashMap<>();
+
 
         response.put("message", str);
+
+        System.out.println(response);
+        System.out.println(rCode);
         byte[] bytes = response.toString().getBytes(StandardCharsets.UTF_8);
         exchange.sendResponseHeaders(rCode, bytes.length);
         OutputStream os = exchange.getResponseBody();
@@ -88,5 +86,4 @@ public class UserRegisterHandler implements HttpHandler {
         os.close();
 
     }
-
 }
