@@ -2,6 +2,7 @@ package com.example.quiz.controllers;
 
 import com.example.quiz.HelloApplication;
 import com.example.quiz.objects.User;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -44,6 +45,8 @@ public class LkPrepodController implements Initializable {
     private Button changeButton;
     @FXML
     private Label errorMessage;
+    @FXML
+    private Button createTestButton;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         fio.setText(user.getFullName());
@@ -214,6 +217,20 @@ public class LkPrepodController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public void clickOnCreateTestButton(ActionEvent event) throws IOException{
+        try {
+            CreateTestController.setUser(user);
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("createTest.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Создание теста");
+            Scene scene = new Scene(fxmlLoader.load(), 500, 450);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
