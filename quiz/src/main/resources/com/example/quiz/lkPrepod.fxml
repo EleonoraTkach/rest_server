@@ -37,7 +37,7 @@
             <AnchorPane prefHeight="370.0" prefWidth="631.0">
                <children>
                   <ScrollPane layoutX="14.0" layoutY="14.0" prefHeight="326.0" prefWidth="611.0" />
-                  <Button layoutX="477.0" layoutY="359.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="143.0" text="Создать тест" />
+                  <Button fx:id="createTestButton" layoutX="477.0" layoutY="359.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="143.0" onAction="#clickOnCreateTestButton" text="Создать тест" />
                </children>
             </AnchorPane>
          </content>

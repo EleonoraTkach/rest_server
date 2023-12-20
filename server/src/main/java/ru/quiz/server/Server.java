@@ -1,10 +1,7 @@
 package ru.quiz.server;
 
 import com.sun.net.httpserver.HttpServer;
-import ru.quiz.server.handlers.UserAuthHandler;
-import ru.quiz.server.handlers.UserRegisterHandler;
-import ru.quiz.server.handlers.UserUpdatePasswordAndEmailHandler;
-import ru.quiz.server.handlers.UserUpdatePasswordHandler;
+import ru.quiz.server.handlers.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -21,6 +18,7 @@ public class Server {
             httpServer.createContext("/user/auth", new UserAuthHandler());
             httpServer.createContext("/user/updatePassword", new UserUpdatePasswordHandler());
             httpServer.createContext("/user/updatePasswordAndEmail", new UserUpdatePasswordAndEmailHandler());
+            httpServer.createContext("/user/createTest", new CreateTestHandler());
             httpServer.start();
         } catch (IOException e) {
             throw new RuntimeException(e);

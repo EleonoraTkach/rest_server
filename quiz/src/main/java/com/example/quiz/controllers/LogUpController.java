@@ -103,6 +103,7 @@ public class LogUpController implements Initializable {
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    errorMessage.setText("Нет соединения с сервером");
                 }
             } else {
                 errorMessage.setText("Введенные пароли не совпадают");
@@ -112,16 +113,4 @@ public class LogUpController implements Initializable {
         }
     }
 
-    public void loadNewFXML() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/quiz/src/main/resources/com/example"));
-            Parent root = fxmlLoader.load();
-
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

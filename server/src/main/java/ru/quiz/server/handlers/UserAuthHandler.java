@@ -45,9 +45,10 @@ public class UserAuthHandler implements HttpHandler {
             while ((line = reader.readLine()) != null) {
                 requestBody.append(line);
             }
-
+            System.out.println(requestBody);
             try {
                 User user = mapper.readValue(requestBody.toString(), User.class);
+                System.out.println(user.toString());
                 CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaQuery<User> criteria = builder.createQuery(User.class);
                 Root<User> root = criteria.from(User.class);
@@ -58,6 +59,7 @@ public class UserAuthHandler implements HttpHandler {
                 List<User> list = qwery.getResultList();
 
                 if (list == null || list.isEmpty()) {
+                    rCode = 400;
                     if (user.getEmail() == null || user.getPassword() == null){
                         str = "all fields must be filled in";
                     } else {
