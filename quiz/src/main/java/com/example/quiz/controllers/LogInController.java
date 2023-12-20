@@ -52,63 +52,73 @@ public class LogInController {
 
             // Создаем тело запроса
             String requestBody = "{\"email\": \"" + strLogin + "\", \"password\": \"" + strPassword + "\"}";
-
+            System.out.println(requestBody);
             // Получаем поток для записи данных в тело запроса
             try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
                 wr.write(requestBody.getBytes(StandardCharsets.UTF_8));
             }
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
 
-            // Получаем ответ от сервера
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                String line;
+                StringBuffer response = new StringBuffer();
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+                String[] message = response.toString().replaceAll("\\{|}","").split("=");
+                logInExeption.setText("Ошибка " + connection.getResponseCode() + ": " + message[1]);
+            } else {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
 
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
 
-            // Выводим ответ от сервера
-            System.out.println(response.toString());
-            ObjectMapper mapper = new ObjectMapper();
-            String message = response.toString().replaceAll("\\{|}", "");
-            String[] pairs = message.split("(, )");
+                // Выводим ответ от сервера
+                System.out.println(response.toString());
+                ObjectMapper mapper = new ObjectMapper();
+                String message = response.toString().replaceAll("\\{|}", "");
+                String[] pairs = message.split("(, )");
 
 // Создаем Map для хранения пар ключ-значение
-            HashMap<String, String> parsedResponse = new HashMap<>();
+                HashMap<String, String> parsedResponse = new HashMap<>();
 
 // Разбиваем каждую пару ключ-значение по знаку равно и добавляем в Map
-            for (String pair : pairs) {
-                String[] keyValue = pair.split("=");
-                parsedResponse.put("\"" + keyValue[0] + "\"", "\"" + keyValue[1] + "\"");
-            }
-            System.out.println(parsedResponse);
-            if (parsedResponse.get("\"message\"").equals("\"success\"")) {
-                String path  = "";
-                User user = new User(Long.parseLong(parsedResponse.get("\"id\"").replaceAll("\"", "")), parsedResponse.get("\"fullName\"").replaceAll("\"", ""), parsedResponse.get("\"email\"").replaceAll("\"", ""), parsedResponse.get("\"role\"").replaceAll("\"", ""), parsedResponse.get("\"password\"").replaceAll("\"", ""));
-                if (user.getRole().equals("Преподаватель")) {
-                    path = "lkPrepod.fxml";
-                    LkPrepodController.setUser(user);
-                } else if (user.getRole().equals("Администратор")) {
-                    path = "lkAdmin.fxml";
-                    LkAdminController.setUser(user);
-                } else {
-                    path = "lkStudent.fxml";
-                    LkStudentController.setUser(user);
+                for (String pair : pairs) {
+                    String[] keyValue = pair.split("=");
+                    parsedResponse.put("\"" + keyValue[0] + "\"", "\"" + keyValue[1] + "\"");
                 }
-                clickLogIn(path);
-                System.out.println(user.toString());
+                System.out.println(parsedResponse);
+                if (parsedResponse.get("\"message\"").equals("\"success\"")) {
+                    String path  = "";
+                    User user = new User(Long.parseLong(parsedResponse.get("\"id\"").replaceAll("\"", "")), parsedResponse.get("\"fullName\"").replaceAll("\"", ""), parsedResponse.get("\"email\"").replaceAll("\"", ""), parsedResponse.get("\"role\"").replaceAll("\"", ""), parsedResponse.get("\"password\"").replaceAll("\"", ""));
+                    if (user.getRole().equals("Преподаватель")) {
+                        path = "lkPrepod.fxml";
+                        LkPrepodController.setUser(user);
+                    } else if (user.getRole().equals("Администратор")) {
+                        path = "lkAdmin.fxml";
+                        LkAdminController.setUser(user);
+                    } else {
+                        path = "lkStudent.fxml";
+                        LkStudentController.setUser(user);
+                    }
+                    clickLogIn(path);
+                    System.out.println(user.toString());
 
-            } else {
-                logInExeption.setText(parsedResponse.get("\"message\"").replaceAll("\"", ""));
+                } else {
+                    logInExeption.setText(parsedResponse.get("\"message\"").replaceAll("\"", ""));
+                }
+
+                connection.disconnect();
             }
 
-            //System.out.println(user.toString());
-
-            // Закрываем соединение
-            connection.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
+            logInExeption.setText("Connection not founded");
         }
     }
 

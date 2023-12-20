@@ -1,33 +1,29 @@
-package com.example.quiz.objects;
-
-import java.util.ArrayList;
+package ru.quiz.server.entities;
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
+@Table(name = "test")
 public class Test {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "title_test", nullable = false)
     private String title;
+    @Column(name = "topic_test", nullable = false)
     private String topic;
+    @Column(name = "quantity_quenstion", nullable = false)
     private Integer quantity;
-    private Long idUser;
-    List<Question> questions = new ArrayList();
 
-    public Test(String title, String topic, Integer quantity, Long idUser) {
+    @Column(name = "id_user", nullable = false)
+    private Long idUser;
+
+    public Test(Long id, String title, String topic, Integer quantity, Long idUser) {
+        this.id = id;
         this.title = title;
         this.topic = topic;
         this.quantity = quantity;
         this.idUser = idUser;
-    }
-
-    @Override
-    public String toString() {
-        return "Test{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", topic='" + topic + '\'' +
-                ", quantity=" + quantity +
-                ", idUser=" + idUser +
-                ", questions=" + questions +
-                '}';
     }
 
     public Long getId() {
@@ -70,11 +66,14 @@ public class Test {
         this.idUser = idUser;
     }
 
-    public List<Question> getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
+    @Override
+    public String toString() {
+        return "Test{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", topic='" + topic + '\'' +
+                ", quantity=" + quantity +
+                ", idUser=" + idUser +
+                '}';
     }
 }

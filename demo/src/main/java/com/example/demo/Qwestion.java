@@ -1,4 +1,4 @@
-package com.example.quiz.objects;
+package com.example.demo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,13 +8,11 @@ public class Qwestion {
     private Long idTest;
     private String qwestion;
     private String typeQwestion;
-    private Integer quantityAnswer;
-    List<Answer> answer = new ArrayList();
+    List<Answer> answers = new ArrayList();
 
-    public Qwestion(String qwestion, String typeQwestion, Integer quantityAnswer) {
+    public Qwestion(String qwestion, String typeQwestion) {
         this.qwestion = qwestion;
         this.typeQwestion = typeQwestion;
-        this.quantityAnswer = quantityAnswer;
     }
     public Long getId() {
         return id;
@@ -48,19 +46,22 @@ public class Qwestion {
         this.typeQwestion = typeQwestion;
     }
 
-    public Integer getQuantityAnswer() {
-        return quantityAnswer;
+    public List<Answer> getAnswers() {
+        return answers;
     }
 
-    public void setQuantityAnswer(Integer quantityAnswer) {
-        this.quantityAnswer = quantityAnswer;
+    public void setAnswers(List<Answer> answers) {
+        this.answers = answers;
     }
 
-    public List<Answer> getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(List<Answer> answer) {
-        this.answer = answer;
+    @Override
+    public String toString() {
+        return "Qwestion{" +
+                "id=" + id +
+                ", idTest=" + idTest +
+                ", qwestion='" + qwestion + '\'' +
+                ", typeQwestion='" + typeQwestion + '\'' +
+                ", answers=" + answers +
+                '}';
     }
 }

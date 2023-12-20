@@ -103,6 +103,7 @@ public class LogUpController implements Initializable {
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    errorMessage.setText("Нет соединения с сервером");
                 }
             } else {
                 errorMessage.setText("Введенные пароли не совпадают");

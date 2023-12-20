@@ -1,27 +1,30 @@
-package com.example.quiz.objects;
+package ru.quiz.server.client;
 
-public class Answer {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class AnswerClient {
     private Long id;
     private Long idQuestion;
     private String answer;
     private Boolean rightans;
     private Double koefPoint;
 
-    public Answer(String answer, Boolean rightans, Double koefPoint) {
+    @JsonCreator
+    public AnswerClient(
+            // Добавляем аннотацию @JsonProperty к каждому параметру
+            @JsonProperty("id") Long id,
+            @JsonProperty("idQuestion") Long idQuestion,
+            @JsonProperty("answer") String answer,
+            @JsonProperty("rightans") Boolean rightans,
+            @JsonProperty("koefPoint") Double koefPoint
+
+    ) {
+        this.id = id;
+        this.idQuestion = idQuestion;
         this.answer = answer;
         this.rightans = rightans;
         this.koefPoint = koefPoint;
-    }
-
-    @Override
-    public String toString() {
-        return "Answer{" +
-                "id=" + id +
-                ", idQuestion=" + idQuestion +
-                ", answer='" + answer + '\'' +
-                ", rightans=" + rightans +
-                ", koefPoint=" + koefPoint +
-                '}';
     }
 
     public Long getId() {
@@ -62,5 +65,16 @@ public class Answer {
 
     public void setKoefPoint(Double koefPoint) {
         this.koefPoint = koefPoint;
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "id=" + id +
+                ", idQuestion=" + idQuestion +
+                ", answer='" + answer + '\'' +
+                ", rightans=" + rightans +
+                ", koefPoint=" + koefPoint +
+                '}';
     }
 }

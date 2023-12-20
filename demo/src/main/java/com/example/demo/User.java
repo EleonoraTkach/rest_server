@@ -1,26 +1,20 @@
-package ru.quiz.server.entities;
+package com.example.demo;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "users")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "full_name", nullable = false)
     private String fullName;
-
-    @Column(name = "email", unique = true, nullable = false)
     private String email;
-
-    @Column(name = "password", nullable = false)
     private String password;
-    @Column(name = "role_user", nullable = false)
     private String role;
-    @Column(name = "is_validated", nullable = false)
     private Boolean is_validated;
+
+    public User(Long id, String fullName, String email, String role, String password) {
+        this.id = id;
+        this.fullName = fullName;
+        this.email = email;
+        this.role = role;
+        this.password = password;
+    }
 
     public void setRole(String role) {
         this.role = role;
@@ -70,16 +64,9 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", fullName='" + fullName + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
-                ", is_validated=" + is_validated +
-                '}';
+
+        return this.fullName + " " + this.email+ " " + this.role + " " + this.id + " " + this.password;
     }
 }

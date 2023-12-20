@@ -1,10 +1,5 @@
-package com.example.quiz.controllers;
+package com.example.demo;
 
-import com.example.quiz.addElements.ResponseCreateTest;
-import com.example.quiz.objects.Answer;
-import com.example.quiz.objects.Question;
-import com.example.quiz.objects.Test;
-import com.example.quiz.objects.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -37,25 +32,16 @@ public class CreateTestController implements Initializable {
     private Spinner<Integer> spinner = new Spinner<>(1, 70, 1);
     @FXML
     private Label errorMessage;
-
-    public static User getUser() {
-        return user;
-    }
-
-    public static void setUser(User user) {
-        CreateTestController.user = user;
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 70, 1));
     }
     @FXML
     private void clickOnContinueButton() throws IOException {
-        errorMessage.setText("");
+
         if (!(nameTest.getText() == null || (nameTest.getText().equals(""))) && !(topicTest.getText() == null || (topicTest.getText().equals(""))) && spinner.getValue() != null) {
             try {
-
+                System.out.println(user.toString());
                 if (Integer.parseInt(String.valueOf(spinner.getValue())) > 0) {
                     Integer n = Integer.parseInt(String.valueOf(spinner.getValue()));
                     ObservableList<VBox> vBox = FXCollections.observableArrayList();
@@ -72,7 +58,7 @@ public class CreateTestController implements Initializable {
                         newVBox.setFillWidth(true);
                         vBox.addAll(newVBox);
                     }
-
+                    System.out.println(pane.getPrefWidth());
                     pane.setPrefHeight(USE_COMPUTED_SIZE);
                     Line line = new Line();
                     line.setStartX(0);
@@ -85,39 +71,27 @@ public class CreateTestController implements Initializable {
                     scrollPane.setFitToHeight(false);
                     Button buttonSave = new Button("Создать тест");
                     buttonSave.setOnAction(event -> {
-                        errorMessage.setText("");
                         Test test = null;
-
-                        if (!(nameTest.getText() == null || nameTest.getText().equals("")) && !(topicTest.getText() == null || (topicTest.getText().equals(""))) && spinner.getValue() != null) {
+                        if (!(nameTest.getText() == null || (nameTest.getText().equals(""))) && !(topicTest.getText() == null || (topicTest.getText().equals(""))) && spinner.getValue() != null) {
                             test = new Test(nameTest.getText(),topicTest.getText(), Integer.parseInt(String.valueOf(spinner.getValue())), user.getId());
-                            Boolean pullAll = true;
-
-                            if (vBox.size() == test.getQuantity()) {
-                                for (int l = 0; l < vBox.size(); l++) {
-
-                                    if (saveTest(vBox.get(l)) == null) {
-                                        pullAll  = false;
-                                    }
-                                    if (test != null) {
-                                        test.getQuestions().add(saveTest(vBox.get(l)));
-                                    }
-
-                                }
-                                if (pullAll) {
-                                    ResponseCreateTest.setTest(test);
-                                    ResponseCreateTest.setUser(user);
-                                    ResponseCreateTest.sendRequest(errorMessage);
-                                    buttonSave.setText("Сохранено");
-                                }
-
-                            } else {
-                                errorMessage.setText("Введенное количество вопросов не соотвествует добавленному");
-                            }
-
                         } else {
                             errorMessage.setText("Все поля должны быть заполнены");
                         }
-
+                        Boolean pullAll = true;
+                        System.out.println(vBox.size());
+                        for (int l = 0; l < vBox.size(); l++) {
+                            System.out.println(l + " прогонка");
+                            if (saveTest(vBox.get(l)) == null) {
+                                pullAll  = false;
+                            }
+                            test.getQwestions().add(saveTest(vBox.get(l)));
+                        }
+                        if (pullAll) {
+                            buttonSave.setText("Сохранено");
+                        }
+                        System.out.println(test);
+                        responseCreateTest.setTest(test);
+                        responseCreateTest.setUser(user);
                     });
                     pane.getChildren().addAll(buttonSave);
                 } else {
@@ -132,16 +106,16 @@ public class CreateTestController implements Initializable {
         }
 
     }
-    private Question saveTest(VBox content) {
+    private Qwestion saveTest(VBox content) {
         String str = "";
-        Question newQuestion = null;
+        Qwestion newQwestion = null;
         Label labelError = (Label) content.getChildren().get(5);
         labelError.setTextFill(Color.RED);
         TextField textField = (TextField) content.getChildren().get(1);
         ComboBox typeQuestions = (ComboBox) content.getChildren().get(3);
-
+        System.out.println(textField.getText() + " " + typeQuestions.getValue());
         if (typeQuestions.getValue() != null && !(textField.getText() == null || textField.getText().equals(""))) {
-            newQuestion = new Question(textField.getText(), (String) typeQuestions.getValue());
+            newQwestion = new Qwestion(textField.getText(), (String) typeQuestions.getValue());
             labelError.setText("");
             Object value = typeQuestions.getValue();
             Boolean isSelectOneRadiobutton = false;
@@ -153,29 +127,29 @@ public class CreateTestController implements Initializable {
                         RadioButton radioButton = (RadioButton) hbox.getChildren().get(1);
                         Double bal = 0.0;
                         Answer answer;
-
+                        System.out.println(textFieldAnswer.getText());
                         if (!(textFieldAnswer.getText() == null || textFieldAnswer.getText().equals(""))) {
                             if (radioButton.isSelected()) {
                                 bal = 1.0;
                                 isSelectOneRadiobutton = true;
                             }
                             answer = new Answer(textFieldAnswer.getText(), radioButton.isSelected(), bal);
-                            newQuestion.getAnswers().add(answer);
+                            newQwestion.getAnswers().add(answer);
                         } else {
                             str = "Все поля должны быть заполнены";
                             labelError.setText(str);
-                            newQuestion = null;
-                            return newQuestion;
+                            newQwestion = null;
+                            return newQwestion;
                         }
 
                     }
                     if (!isSelectOneRadiobutton) {
                         str = "Необходимо выбрать один правильный ответ";
                         labelError.setText(str);
-                        newQuestion = null;
+                        newQwestion = null;
                     }
 
-                    return newQuestion;
+                    return newQwestion;
                 } else if (value.equals("Выбор нескольких правильных ответов")) {
                     Integer kolvo = 0;
                     for (int i = 6; i < 10; i++) {
@@ -188,12 +162,12 @@ public class CreateTestController implements Initializable {
                                 kolvo += 1;
                             }
                             answer = new Answer(textFieldAnswer.getText(), checkBox.isSelected(), 0.0);
-                            newQuestion.getAnswers().add(answer);
+                            newQwestion.getAnswers().add(answer);
                         } else {
                             str = "Все поля должны быть заполнены";
                             labelError.setText(str);
-                            newQuestion = null;
-                            return newQuestion;
+                            newQwestion = null;
+                            return newQwestion;
                         }
 
 
@@ -201,43 +175,43 @@ public class CreateTestController implements Initializable {
                     if (kolvo < 2) {
                         str = "Необходимо выбрать хотя бы два правильных ответа";
                         labelError.setText(str);
-                        newQuestion = null;
-                        return newQuestion;
+                        newQwestion = null;
+                        return newQwestion;
                     } else {
                         for (int j = 0; j < 4; j++) {
-                            if (newQuestion.getAnswers().get(j).getRightans()) {
-                                newQuestion.getAnswers().get(j).setKoefPoint(kolvo/4.0);
+                            if (newQwestion.getAnswers().get(j).getRight()) {
+                                newQwestion.getAnswers().get(j).setKoefPoint(kolvo/4.0);
                             }
                         }
-                        return newQuestion;
+                        return newQwestion;
                     }
 
                 } else if (value.equals("Вписать ответ")) {
                     TextField textFieldAnswer = (TextField) content.getChildren().get(6);
                     if (!(textFieldAnswer.getText() == null || textFieldAnswer.getText().equals(""))) {
                         Answer answer = new Answer(textFieldAnswer.getText(), true, 1.0);
-                        newQuestion.getAnswers().add(answer);
-                        return newQuestion;
+                        newQwestion.getAnswers().add(answer);
+                        return newQwestion;
                     } else {
                         str = "Все поля должны быть заполнены";
                         labelError.setText(str);
-                        newQuestion = null;
-                        return newQuestion;
+                        newQwestion = null;
+                        return newQwestion;
                     }
                 }
             } else {
                 labelError.setText("Необходимо нажать кнопку продолжить для заполнения ответов");
-                newQuestion = null;
-                return newQuestion;
+                newQwestion = null;
+                return newQwestion;
             }
 
         } else {
             str = "Все поля должны быть заполнены";
             labelError.setText(str);
-            newQuestion = null;
-            return newQuestion;
+            newQwestion = null;
+            return newQwestion;
         }
-        return newQuestion;
+        return newQwestion;
     }
     private VBox addNewQuestion(Integer number) {
         ObservableList<Node> objects = FXCollections.observableArrayList();
@@ -261,6 +235,7 @@ public class CreateTestController implements Initializable {
                 Object value = typeQuestions.getValue();
                 if (value.equals("Выбор одного правильного ответа")) {
                     while (6 < content.getChildren().size()) {
+                        System.out.println(content.getChildren().size());
                         content.getChildren().remove(6);
                     }
                     ToggleGroup group = new ToggleGroup();
@@ -288,6 +263,7 @@ public class CreateTestController implements Initializable {
                     content.getChildren().addAll(line);
                 } else if (value.equals("Выбор нескольких правильных ответов")) {
                     while (6 < content.getChildren().size()) {
+                        System.out.println(content.getChildren().size());
                         content.getChildren().remove(6);
                     }
 
@@ -313,6 +289,7 @@ public class CreateTestController implements Initializable {
             } else {
                 labelError.setText("Заполните суть вопроса и его тип, чтобы перейти к следующему шагу");
                 while (7 < content.getChildren().size()) {
+                    System.out.println(content.getChildren().size());
                     content.getChildren().remove(6);
                 }
 
@@ -325,6 +302,7 @@ public class CreateTestController implements Initializable {
 
         objects.addAll(label, text,new Label("Тип ответа:"), typeQuestions,buttonNote,labelError,line);
         content.setAlignment(Pos.CENTER);
+        //content.setPadding(new Insets(10, 40, 10, 40));
         content.setSpacing(7.0);
         content.getChildren().addAll(objects);
         return content;
