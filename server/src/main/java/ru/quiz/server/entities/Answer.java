@@ -15,6 +15,13 @@ public class Answer {
     private Boolean rightans;
     @Column(name = "koef", nullable = false)
     private Double koefPoint;
+    public Answer() {
+        this.id = id;
+        this.idQuestion = idQuestion;
+        this.answer = answer;
+        this.rightans = rightans;
+        this.koefPoint = koefPoint;
+    }
 
     public Answer(Long id, Long idQuestion, String answer, Boolean rightans, Double koefPoint) {
         this.id = id;

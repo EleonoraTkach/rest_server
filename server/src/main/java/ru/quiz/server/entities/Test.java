@@ -17,6 +17,13 @@ public class Test {
 
     @Column(name = "id_user", nullable = false)
     private Long idUser;
+    public Test() {
+        this.id = id;
+        this.title = title;
+        this.topic = topic;
+        this.quantity = quantity;
+        this.idUser = idUser;
+    }
 
     public Test(Long id, String title, String topic, Integer quantity, Long idUser) {
         this.id = id;

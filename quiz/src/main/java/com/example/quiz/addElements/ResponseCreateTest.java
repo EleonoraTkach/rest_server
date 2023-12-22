@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -108,8 +109,10 @@ public class ResponseCreateTest {
 
     }
 
-    private static void newWindow(Label labelExeption){
+    private static void newWindow(Label labelExeption) throws IOException {
         Stage stage = (Stage) labelExeption.getScene().getWindow();
         stage.close();
+
+
     }
 }

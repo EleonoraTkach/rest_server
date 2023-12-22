@@ -1,5 +1,8 @@
 package com.example.quiz.objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class User {
     private Long id;
     private String fullName;
@@ -8,12 +11,29 @@ public class User {
     private String role;
     private Boolean is_validated;
 
-    public User(Long id, String fullName, String email, String role,String password) {
+    @JsonCreator
+    public User(
+            @JsonProperty("id") Long id,
+            @JsonProperty("fullName") String fullName,
+            @JsonProperty("email") String email,
+            @JsonProperty("password") String password,
+            @JsonProperty("role") String role,
+            @JsonProperty("is_validated") Boolean is_validated
+    ) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
-        this.role = role;
         this.password = password;
+        this.role = role;
+        this.is_validated = is_validated;
+    }
+
+    public User(Long id, String fullName, String email, String role, String password) {
+        this.id = id;
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
     }
 
     public void setRole(String role) {

@@ -1,5 +1,8 @@
 package com.example.quiz.objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +13,11 @@ public class Question {
     private String typeQuestion;
     List<Answer> answers = new ArrayList();
 
-    public Question(String question, String typeQuestion) {
+    @JsonCreator
+    public Question(
+            @JsonProperty("question") String question,
+            @JsonProperty("typeQuestion") String typeQuestion
+    ) {
         this.question = question;
         this.typeQuestion = typeQuestion;
     }

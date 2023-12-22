@@ -2,6 +2,7 @@ package ru.quiz.server.client;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ru.quiz.server.entities.Answer;
 
 import java.util.ArrayList;
 import java.util.List;

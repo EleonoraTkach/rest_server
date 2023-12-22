@@ -1,15 +1,26 @@
 package com.example.quiz.controllers;
 
 import com.example.quiz.HelloApplication;
+import com.example.quiz.addElements.AnswerResult;
+import com.example.quiz.addElements.AnswerTest;
+import com.example.quiz.objects.ResultAppoint;
+import com.example.quiz.objects.Test;
 import com.example.quiz.objects.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -23,7 +34,17 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class LkStudentController implements Initializable {
+    @FXML
+    private VBox vBoxTab3;
+    @FXML
+    private Label errorMessageTab3;
+    @FXML
+    private Label errorMessageTab2;
+    @FXML
+    private VBox vBoxTab2;
     private static User user;
+    @FXML
+    private Label unicNumber;
     @FXML
     private Button logOut;
     @FXML
@@ -59,6 +80,10 @@ public class LkStudentController implements Initializable {
         newPasswordOne.setVisible(false);
         newPasswordTwo.setText(user.getPassword());
         newPasswordOne.setText(user.getPassword());
+        Long num = user.getId() + 135;
+        unicNumber.setText(" " + num);
+        refreshTab2();
+        refreshTab3();
 
     }
     @FXML
@@ -78,45 +103,49 @@ public class LkStudentController implements Initializable {
                 if (login.getText() == null) {
                     errorMessage.setText("Поле с логином должно быть заполнено");
                 } else {
-                    if (login.getText().equals(user.getEmail()) && !newPasswordOne.getText().equals(user.getPassword())) {
-                        System.out.println(1);
-                        String requestBody = "{\"id\": \"" + user.getId() + "\",\"password\": \"" + newPasswordOne.getText() + "\"}";
-                        StringBuffer response = sendHTTP( "http://localhost:8000/user/updatePassword", requestBody);
-                        if (response != null) {
-                            HashMap<String, String> parsedResponse =  jsonObject(response);
-                            if (parsedResponse.get("\"message\"").equals("\"success\"")){
-                                user.setPassword(parsedResponse.get("\"password\"").replaceAll("\"", ""));
-                                theEnd();
-                            } else {
-                                errorMessage.setText("Ошибка " + ": " + parsedResponse.get("\"message\"").replaceAll("\"", ""));
-                            }
-                        }
-                    } else if (!login.getText().equals(user.getEmail())) {
-                        System.out.println(2);
-                        String requestBody;
-                        if (newPasswordOne.getText().equals(user.getPassword())) {
-                            requestBody = "{\"id\": \"" + user.getId() + "\",\"email\": \"" + login.getText() + "\"}";
-                        } else {
-                            requestBody = "{\"id\": \"" + user.getId() + "\",\"email\": \"" + login.getText() + "\",\"password\": \"" + newPasswordOne.getText() + "\"}";
-                        }
-                        StringBuffer response = sendHTTP( "http://localhost:8000/user/updatePasswordAndEmail", requestBody);
-
-                        if (response != null) {
-                            HashMap<String, String> parsedResponse =  jsonObject(response);
-                            if (parsedResponse.get("\"message\"").equals("\"success\"")){
-                                user.setEmail(parsedResponse.get("\"email\"").replaceAll("\"", ""));
-                                if (!(parsedResponse.get("\"password\"") == null)) {
+                    try {
+                        if (login.getText().equals(user.getEmail()) && !newPasswordOne.getText().equals(user.getPassword())) {
+                            System.out.println(1);
+                            String requestBody = "{\"id\": \"" + user.getId() + "\",\"password\": \"" + newPasswordOne.getText() + "\"}";
+                            StringBuffer response = sendHTTP("http://localhost:8000/user/updatePassword", requestBody);
+                            if (response != null) {
+                                HashMap<String, String> parsedResponse = jsonObject(response);
+                                if (parsedResponse.get("\"message\"").equals("\"success\"")) {
                                     user.setPassword(parsedResponse.get("\"password\"").replaceAll("\"", ""));
+                                    theEnd();
+                                } else {
+                                    errorMessage.setText("Ошибка " + ": " + parsedResponse.get("\"message\"").replaceAll("\"", ""));
                                 }
-                                theEnd();
-                            } else {
-                                errorMessage.setText("Ошибка " + ": " + parsedResponse.get("\"message\"").replaceAll("\"", ""));
                             }
+                        } else if (!login.getText().equals(user.getEmail())) {
+                            System.out.println(2);
+                            String requestBody;
+                            if (newPasswordOne.getText().equals(user.getPassword())) {
+                                requestBody = "{\"id\": \"" + user.getId() + "\",\"email\": \"" + login.getText() + "\"}";
+                            } else {
+                                requestBody = "{\"id\": \"" + user.getId() + "\",\"email\": \"" + login.getText() + "\",\"password\": \"" + newPasswordOne.getText() + "\"}";
+                            }
+                            StringBuffer response = sendHTTP("http://localhost:8000/user/updatePasswordAndEmail", requestBody);
 
+                            if (response != null) {
+                                HashMap<String, String> parsedResponse = jsonObject(response);
+                                if (parsedResponse.get("\"message\"").equals("\"success\"")) {
+                                    user.setEmail(parsedResponse.get("\"email\"").replaceAll("\"", ""));
+                                    if (!(parsedResponse.get("\"password\"") == null)) {
+                                        user.setPassword(parsedResponse.get("\"password\"").replaceAll("\"", ""));
+                                    }
+                                    theEnd();
+                                } else {
+                                    errorMessage.setText("Ошибка " + ": " + parsedResponse.get("\"message\"").replaceAll("\"", ""));
+                                }
+
+                            }
+                        } else if (login.getText().equals(user.getEmail()) && newPasswordOne.getText().equals(user.getPassword())) {
+                            System.out.println(3);
+                            theEnd();
                         }
-                    } else if (login.getText().equals(user.getEmail()) && newPasswordOne.getText().equals(user.getPassword())) {
-                        System.out.println(3);
-                        theEnd();
+                    } catch (Exception e) {
+                        errorMessage.setText("Не удалось установить соединение с сервером");
                     }
                 }
 
@@ -212,7 +241,177 @@ public class LkStudentController implements Initializable {
 
         } catch (Exception e) {
             e.printStackTrace();
+            errorMessage.setText("Не удалось установить соединение с сервером");
             return null;
         }
+    }
+
+    public HBox addNodeForTest(Test test) {
+        HBox container = new HBox();
+        VBox containerForLabel = new VBox(new Label("Тест: " + test.getTitle()),
+                new Label("Тема: " + test.getTopic()),new Label("Количество вопросов: " + test.getQuantity()));
+        Button buttonView = new Button("Пройти тест");
+        buttonView.setOnAction(event -> {
+            try {
+                ViewTestController.setTest(test);
+                ViewTestController.setUser(user);
+
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("viewTest.fxml"));
+                Stage stage = new Stage();
+                stage.setOnCloseRequest(eventClose -> {
+                    vBoxTab2.getChildren().clear();
+                    refreshTab2();
+                    vBoxTab3.getChildren().clear();
+                    refreshTab3();
+                });
+                stage.setTitle("Тест");
+                Scene scene = new Scene(fxmlLoader.load(), 500, 450);
+                stage.setScene(scene);
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.showAndWait();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        });
+
+        VBox containerForButton = new VBox(buttonView);
+        containerForLabel.setAlignment(Pos.CENTER);
+        containerForButton.setAlignment(Pos.CENTER);
+        containerForLabel.setPadding(new Insets(5, 5, 5, 5));
+        containerForButton.setPadding(new Insets(5, 5, 5, 5));
+        container.getChildren().addAll(containerForLabel,containerForButton);
+        return container;
+    }
+    public void clickOnRefreshButtonTab2(ActionEvent actionEvent) {
+        vBoxTab2.getChildren().clear();
+        refreshTab2();
+    }
+
+    public void refreshTab2() {
+        errorMessageTab2.setText("");
+        try {
+            URL url = new URL("http://localhost:8000/user/selectTestsStudents");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            connection.setDoOutput(true);
+            String requestBody = "{\"id\": \"" + user.getId() + "\"}";
+            System.out.println(requestBody);
+            try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
+                wr.write(requestBody.getBytes(StandardCharsets.UTF_8));
+            }
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                String line;
+                StringBuffer response = new StringBuffer();
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+                String[] message = response.toString().replaceAll("\\{|}","").split("=");
+                errorMessageTab2.setText("Ошибка " + connection.getResponseCode() + ": " + message[1].split("\""));
+            } else {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                System.out.println(response.toString());
+                ObjectMapper mapper = new ObjectMapper();
+                String message = response.toString().replaceAll("=",":");
+                System.out.println(message);
+                AnswerTest answer = mapper.readValue(message, AnswerTest.class);
+                System.out.println(answer);
+                for (int i = 0; i < answer.getTests().size();i++) {
+                    Test test = answer.getTests().get(i);
+                    vBoxTab2.getChildren().addAll(addNodeForTest(test));
+                }
+
+                if (vBoxTab2.getChildren().size() == 0) {
+                    errorMessageTab2.setText("Нет назначенных тестов");
+                }
+                connection.disconnect();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorMessageTab2.setText("Connection not founded");
+        }
+    }
+
+    public HBox addNodeForResult(ResultAppoint resultAppoint) {
+        HBox container = new HBox();
+        VBox containerForLabel = new VBox(new Label("Тест: " + resultAppoint.getTitleTest())
+                ,new Label("Количество баллов: " + resultAppoint.getResult()));
+        containerForLabel.setAlignment(Pos.CENTER);
+        containerForLabel.setPadding(new Insets(5, 5, 5, 5));
+        container.getChildren().addAll(containerForLabel);
+        return container;
+    }
+
+    public void refreshTab3() {
+        errorMessageTab3.setText("");
+        try {
+            URL url = new URL("http://localhost:8000/user/selectResultTestYour");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            connection.setDoOutput(true);
+            String requestBody = "{\"id\": \"" + user.getId() + "\"}";
+            System.out.println(requestBody);
+            try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
+                wr.write(requestBody.getBytes(StandardCharsets.UTF_8));
+            }
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                String line;
+                StringBuffer response = new StringBuffer();
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+                String[] message = response.toString().replaceAll("\\{|}","").split("=");
+                errorMessageTab3.setText("Ошибка " + connection.getResponseCode() + ": " + message[1].split("\""));
+            } else {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                System.out.println(response.toString());
+                ObjectMapper mapper = new ObjectMapper();
+                String message = response.toString().replaceAll("=",":");
+                System.out.println(message);
+                AnswerResult answerResult = mapper.readValue(message, AnswerResult.class);
+                System.out.println(answerResult);
+                System.out.println(vBoxTab3.getChildren().size());
+                for (int i = 0; i < answerResult.getResults().size();i++) {
+                    ResultAppoint resultAppoint = answerResult.getResults().get(i);
+                    vBoxTab3.getChildren().addAll(addNodeForResult(resultAppoint));
+                }
+                if (vBoxTab3.getChildren().size() == 0) {
+                    errorMessageTab3.setText("Нет результатов тестов студента");
+                }
+                connection.disconnect();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorMessageTab3.setText("Connection not founded");
+        }
+    }
+
+    public void clickOnButtonRefreshTab3(ActionEvent actionEvent) {
+        vBoxTab3.getChildren().clear();
+        refreshTab3();
     }
 }
