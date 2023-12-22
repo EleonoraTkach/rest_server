@@ -26,7 +26,9 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public class LkAdminController implements Initializable {
-    private static User user = new User(null,"", "", "Администратор","");
+    private static User user;
+    @FXML
+    private Label unicNumber;
     @FXML
     private Button logOut;
     @FXML
@@ -63,6 +65,8 @@ public class LkAdminController implements Initializable {
         newPasswordOne.setVisible(false);
         newPasswordTwo.setText(user.getPassword());
         newPasswordOne.setText(user.getPassword());
+        Long num = user.getId() + 135;
+        unicNumber.setText(" " + num);
 
     }
     @FXML
@@ -82,45 +86,49 @@ public class LkAdminController implements Initializable {
                 if (login.getText() == null) {
                     errorMessage.setText("Поле с логином должно быть заполнено");
                 } else {
-                    if (login.getText().equals(user.getEmail()) && !newPasswordOne.getText().equals(user.getPassword())) {
-                        System.out.println(1);
-                        String requestBody = "{\"id\": \"" + user.getId() + "\",\"password\": \"" + newPasswordOne.getText() + "\"}";
-                        StringBuffer response = sendHTTP( "http://localhost:8000/user/updatePassword", requestBody);
-                        if (response != null) {
-                            HashMap<String, String> parsedResponse =  jsonObject(response);
-                            if (parsedResponse.get("\"message\"").equals("\"success\"")){
-                                user.setPassword(parsedResponse.get("\"password\"").replaceAll("\"", ""));
-                                theEnd();
-                            } else {
-                                errorMessage.setText("Ошибка " + ": " + parsedResponse.get("\"message\"").replaceAll("\"", ""));
-                            }
-                        }
-                    } else if (!login.getText().equals(user.getEmail())) {
-                        System.out.println(2);
-                        String requestBody;
-                        if (newPasswordOne.getText().equals(user.getPassword())) {
-                            requestBody = "{\"id\": \"" + user.getId() + "\",\"email\": \"" + login.getText() + "\"}";
-                        } else {
-                            requestBody = "{\"id\": \"" + user.getId() + "\",\"email\": \"" + login.getText() + "\",\"password\": \"" + newPasswordOne.getText() + "\"}";
-                        }
-                        StringBuffer response = sendHTTP( "http://localhost:8000/user/updatePasswordAndEmail", requestBody);
-
-                        if (response != null) {
-                            HashMap<String, String> parsedResponse =  jsonObject(response);
-                            if (parsedResponse.get("\"message\"").equals("\"success\"")){
-                                user.setEmail(parsedResponse.get("\"email\"").replaceAll("\"", ""));
-                                if (!(parsedResponse.get("\"password\"") == null)) {
+                    try {
+                        if (login.getText().equals(user.getEmail()) && !newPasswordOne.getText().equals(user.getPassword())) {
+                            System.out.println(1);
+                            String requestBody = "{\"id\": \"" + user.getId() + "\",\"password\": \"" + newPasswordOne.getText() + "\"}";
+                            StringBuffer response = sendHTTP("http://localhost:8000/user/updatePassword", requestBody);
+                            if (response != null) {
+                                HashMap<String, String> parsedResponse = jsonObject(response);
+                                if (parsedResponse.get("\"message\"").equals("\"success\"")) {
                                     user.setPassword(parsedResponse.get("\"password\"").replaceAll("\"", ""));
+                                    theEnd();
+                                } else {
+                                    errorMessage.setText("Ошибка " + ": " + parsedResponse.get("\"message\"").replaceAll("\"", ""));
                                 }
-                                theEnd();
-                            } else {
-                                errorMessage.setText("Ошибка " + ": " + parsedResponse.get("\"message\"").replaceAll("\"", ""));
                             }
+                        } else if (!login.getText().equals(user.getEmail())) {
+                            System.out.println(2);
+                            String requestBody;
+                            if (newPasswordOne.getText().equals(user.getPassword())) {
+                                requestBody = "{\"id\": \"" + user.getId() + "\",\"email\": \"" + login.getText() + "\"}";
+                            } else {
+                                requestBody = "{\"id\": \"" + user.getId() + "\",\"email\": \"" + login.getText() + "\",\"password\": \"" + newPasswordOne.getText() + "\"}";
+                            }
+                            StringBuffer response = sendHTTP("http://localhost:8000/user/updatePasswordAndEmail", requestBody);
 
+                            if (response != null) {
+                                HashMap<String, String> parsedResponse = jsonObject(response);
+                                if (parsedResponse.get("\"message\"").equals("\"success\"")) {
+                                    user.setEmail(parsedResponse.get("\"email\"").replaceAll("\"", ""));
+                                    if (!(parsedResponse.get("\"password\"") == null)) {
+                                        user.setPassword(parsedResponse.get("\"password\"").replaceAll("\"", ""));
+                                    }
+                                    theEnd();
+                                } else {
+                                    errorMessage.setText("Ошибка " + ": " + parsedResponse.get("\"message\"").replaceAll("\"", ""));
+                                }
+
+                            }
+                        } else if (login.getText().equals(user.getEmail()) && newPasswordOne.getText().equals(user.getPassword())) {
+                            System.out.println(3);
+                            theEnd();
                         }
-                    } else if (login.getText().equals(user.getEmail()) && newPasswordOne.getText().equals(user.getPassword())) {
-                        System.out.println(3);
-                        theEnd();
+                    } catch (Exception e) {
+                        errorMessage.setText("Не удалось установить соединение с сервером");
                     }
                 }
 
@@ -215,9 +223,9 @@ public class LkAdminController implements Initializable {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            errorMessage.setText("Не удалось установить соединение с сервером");
         }
+        return null;
     }
 
 }

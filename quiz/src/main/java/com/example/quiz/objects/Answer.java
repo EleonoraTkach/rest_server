@@ -1,5 +1,8 @@
 package com.example.quiz.objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Answer {
     private Long id;
     private Long idQuestion;
@@ -7,7 +10,12 @@ public class Answer {
     private Boolean rightans;
     private Double koefPoint;
 
-    public Answer(String answer, Boolean rightans, Double koefPoint) {
+    @JsonCreator
+    public Answer(
+            @JsonProperty("answer") String answer,
+            @JsonProperty("rightans") Boolean rightans,
+            @JsonProperty("koefPoint") Double koefPoint
+    ) {
         this.answer = answer;
         this.rightans = rightans;
         this.koefPoint = koefPoint;

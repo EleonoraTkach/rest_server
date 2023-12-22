@@ -17,6 +17,12 @@ public class Question {
     private String question;
     @Column(name = "type_question", nullable = false)
     private String typeQuestion;
+    public Question() {
+        this.id = id;
+        this.idTest = idTest;
+        this.question = question;
+        this.typeQuestion = typeQuestion;
+    }
 
     public Question(Long id, Long idTest, String question, String typeQuestion) {
         this.id = id;

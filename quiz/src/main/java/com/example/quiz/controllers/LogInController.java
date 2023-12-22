@@ -80,7 +80,6 @@ public class LogInController {
 
                 // Выводим ответ от сервера
                 System.out.println(response.toString());
-                ObjectMapper mapper = new ObjectMapper();
                 String message = response.toString().replaceAll("\\{|}", "");
                 String[] pairs = message.split("(, )");
 

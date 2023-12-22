@@ -1,5 +1,6 @@
 package com.example.quiz.controllers;
 
+import com.example.quiz.HelloApplication;
 import com.example.quiz.addElements.ResponseCreateTest;
 import com.example.quiz.objects.Answer;
 import com.example.quiz.objects.Question;
@@ -8,15 +9,18 @@ import com.example.quiz.objects.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,7 +28,7 @@ import java.util.ResourceBundle;
 
 import static javafx.scene.control.PopupControl.USE_COMPUTED_SIZE;
 public class CreateTestController implements Initializable {
-    private static User user = new User(5L,"bhjwbr","jvnwjr","cnel","ncjwkrfnvj");
+    private static User user;
     @FXML
     private VBox pane;
     @FXML
@@ -107,7 +111,7 @@ public class CreateTestController implements Initializable {
                                     ResponseCreateTest.setTest(test);
                                     ResponseCreateTest.setUser(user);
                                     ResponseCreateTest.sendRequest(errorMessage);
-                                    buttonSave.setText("Сохранено");
+
                                 }
 
                             } else {
@@ -206,7 +210,7 @@ public class CreateTestController implements Initializable {
                     } else {
                         for (int j = 0; j < 4; j++) {
                             if (newQuestion.getAnswers().get(j).getRightans()) {
-                                newQuestion.getAnswers().get(j).setKoefPoint(kolvo/4.0);
+                                newQuestion.getAnswers().get(j).setKoefPoint(1.0/kolvo);
                             }
                         }
                         return newQuestion;

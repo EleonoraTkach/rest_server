@@ -1,6 +1,7 @@
 package ru.quiz.server;
 
 import com.sun.net.httpserver.HttpServer;
+import org.hibernate.sql.Select;
 import ru.quiz.server.handlers.*;
 
 import java.io.IOException;
@@ -19,6 +20,14 @@ public class Server {
             httpServer.createContext("/user/updatePassword", new UserUpdatePasswordHandler());
             httpServer.createContext("/user/updatePasswordAndEmail", new UserUpdatePasswordAndEmailHandler());
             httpServer.createContext("/user/createTest", new CreateTestHandler());
+            httpServer.createContext("/user/selectTests", new SelectTestsHandler());
+            httpServer.createContext("/user/selectQuestions", new SelectQuestionsAndAnswersHandler());
+            httpServer.createContext("/user/selectUsers", new SelectUsersHandler());
+            httpServer.createContext("/user/selectAppoint", new SelectAppointHandler());
+            httpServer.createContext("/user/selectResultTest", new SelectResultTestHandler());
+            httpServer.createContext("/user/updateResult", new UpdateResultTestHandler());
+            httpServer.createContext("/user/selectTestsStudents", new SelectTestsStudentsHandler());
+            httpServer.createContext("/user/selectResultTestYour", new SelectResultYourTestHandler());
             httpServer.start();
         } catch (IOException e) {
             throw new RuntimeException(e);

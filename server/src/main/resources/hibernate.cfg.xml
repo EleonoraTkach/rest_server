@@ -15,5 +15,6 @@
         <mapping class="ru.quiz.server.entities.Test"/>
         <mapping class="ru.quiz.server.entities.Question"/>
         <mapping class="ru.quiz.server.entities.Answer"/>
+        <mapping class="ru.quiz.server.entities.Appoint"/>
     </session-factory>
 </hibernate-configuration>
