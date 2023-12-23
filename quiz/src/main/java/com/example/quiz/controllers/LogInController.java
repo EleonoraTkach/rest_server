@@ -14,6 +14,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +36,22 @@ public class LogInController {
     private Hyperlink logUpLink;
     @FXML
     private Button logInButton;
+    public String securePassword(String password) {
+        byte[] bytesOfPwd = password.getBytes(StandardCharsets.UTF_8);
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(bytesOfPwd);
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     @FXML
     private void clickOnLogInButton() {
         logInExeption.setText("");
@@ -51,64 +69,73 @@ public class LogInController {
             connection.setDoOutput(true);
 
             // Создаем тело запроса
-            String requestBody = "{\"email\": \"" + strLogin + "\", \"password\": \"" + strPassword + "\"}";
-
+            String requestBody = "{\"email\": \"" + strLogin + "\", \"password\": \"" + securePassword(strPassword) + "\"}";
+            System.out.println(requestBody + " " + securePassword(strPassword));
             // Получаем поток для записи данных в тело запроса
             try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
                 wr.write(requestBody.getBytes(StandardCharsets.UTF_8));
             }
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
 
-            // Получаем ответ от сервера
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                String line;
+                StringBuffer response = new StringBuffer();
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+                String[] message = response.toString().replaceAll("\\{|}","").split("=");
+                logInExeption.setText("Ошибка " + connection.getResponseCode() + ": " + message[1]);
+            } else {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
 
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
 
-            // Выводим ответ от сервера
-            System.out.println(response.toString());
-            ObjectMapper mapper = new ObjectMapper();
-            String message = response.toString().replaceAll("\\{|}", "");
-            String[] pairs = message.split("(, )");
+                // Выводим ответ от сервера
+                System.out.println(response.toString());
+                String message = response.toString().replaceAll("\\{|}", "");
+                String[] pairs = message.split("(, )");
 
 // Создаем Map для хранения пар ключ-значение
-            HashMap<String, String> parsedResponse = new HashMap<>();
+                HashMap<String, String> parsedResponse = new HashMap<>();
 
 // Разбиваем каждую пару ключ-значение по знаку равно и добавляем в Map
-            for (String pair : pairs) {
-                String[] keyValue = pair.split("=");
-                parsedResponse.put("\"" + keyValue[0] + "\"", "\"" + keyValue[1] + "\"");
-            }
-            System.out.println(parsedResponse);
-            if (parsedResponse.get("\"message\"").equals("\"success\"")) {
-                String path  = "";
-                User user = new User(Long.parseLong(parsedResponse.get("\"id\"").replaceAll("\"", "")), parsedResponse.get("\"fullName\"").replaceAll("\"", ""), parsedResponse.get("\"email\"").replaceAll("\"", ""), parsedResponse.get("\"role\"").replaceAll("\"", ""), parsedResponse.get("\"password\"").replaceAll("\"", ""));
-                if (user.getRole().equals("Преподаватель")) {
-                    path = "lkPrepod.fxml";
-                    LkPrepodController.setUser(user);
-                } else if (user.getRole().equals("Администратор")) {
-                    path = "lkAdmin.fxml";
-                    LkAdminController.setUser(user);
-                } else {
-                    path = "lkStudent.fxml";
-                    LkStudentController.setUser(user);
+                for (String pair : pairs) {
+                    String[] keyValue = pair.split("=");
+                    parsedResponse.put("\"" + keyValue[0] + "\"", "\"" + keyValue[1] + "\"");
                 }
-                clickLogIn(path);
-                System.out.println(user.toString());
+                System.out.println(parsedResponse);
+                if (parsedResponse.get("\"message\"").equals("\"success\"")) {
+                    String path  = "";
+                    User user = new User(Long.parseLong(parsedResponse.get("\"id\"").replaceAll("\"", "")), parsedResponse.get("\"fullName\"").replaceAll("\"", ""), parsedResponse.get("\"email\"").replaceAll("\"", ""), parsedResponse.get("\"role\"").replaceAll("\"", ""), parsedResponse.get("\"password\"").replaceAll("\"", ""));
+                    if (user.getRole().equals("Преподаватель")) {
+                        path = "lkPrepod.fxml";
+                        LkPrepodController.setUser(user);
+                    } else if (user.getRole().equals("Администратор")) {
+                        path = "lkAdmin.fxml";
+                        LkAdminController.setUser(user);
+                    } else {
+                        path = "lkStudent.fxml";
+                        LkStudentController.setUser(user);
+                    }
+                    clickLogIn(path);
+                    System.out.println(user.toString());
 
-            } else {
-                logInExeption.setText(parsedResponse.get("\"message\"").replaceAll("\"", ""));
+                } else {
+                    logInExeption.setText(parsedResponse.get("\"message\"").replaceAll("\"", ""));
+                }
+
+                connection.disconnect();
             }
 
-            //System.out.println(user.toString());
-
-            // Закрываем соединение
-            connection.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
+            logInExeption.setText("Connection not founded");
         }
     }
 
@@ -129,7 +156,7 @@ public class LogInController {
     private void clickLogIn(String path) throws IOException{
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path));
-            Scene scene = new Scene(fxmlLoader.load(), 500, 450);
+            Scene scene = new Scene(fxmlLoader.load(), 600, 450);
             Stage stage = (Stage) logInButton.getScene().getWindow();;
             stage.setTitle("Личный кабинет");
             stage.setScene(scene);

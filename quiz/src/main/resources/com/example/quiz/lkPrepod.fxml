@@ -8,8 +8,9 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="456.0" prefWidth="634.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.quiz.controllers.LkPrepodController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="600.0" prefHeight="456.0" prefWidth="634.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.quiz.controllers.LkPrepodController">
   <tabs>
     <Tab text="Личный кабинет">
       <content>
@@ -27,8 +28,10 @@
                   <PasswordField fx:id="newPasswordOne" layoutX="195.0" layoutY="167.0" prefHeight="26.0" prefWidth="316.0" />
                   <Label fx:id="newLabel" layoutX="14.0" layoutY="218.0" text="Повторите пароль ещё раз:" />
                   <PasswordField fx:id="newPasswordTwo" layoutX="197.0" layoutY="214.0" prefHeight="26.0" prefWidth="316.0" />
-                  <Label fx:id="errorMessage" alignment="CENTER" layoutX="148.0" layoutY="277.0" prefHeight="18.0" prefWidth="306.0" textFill="#e40707" />
+                  <Label fx:id="errorMessageTab1" alignment="CENTER" layoutX="148.0" layoutY="277.0" prefHeight="18.0" prefWidth="306.0" textFill="#e40707" />
                   <Button fx:id="logOut" layoutX="404.0" layoutY="336.0" mnemonicParsing="false" onAction="#clickOnLogOutButton" text="Выйти из системы" />
+                  <Label layoutX="63.0" layoutY="14.0" prefHeight="18.0" prefWidth="131.0" text="Уникальный номер:" />
+                  <Label fx:id="unicNumber" layoutX="200.0" layoutY="15.0" prefHeight="18.0" prefWidth="317.0" />
                </children></AnchorPane>
       </content>
     </Tab>
@@ -36,15 +39,35 @@
          <content>
             <AnchorPane prefHeight="370.0" prefWidth="631.0">
                <children>
-                  <ScrollPane layoutX="14.0" layoutY="14.0" prefHeight="326.0" prefWidth="611.0" />
-                  <Button layoutX="477.0" layoutY="359.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="143.0" text="Создать тест" />
+                  <ScrollPane layoutX="16.0" layoutY="50.0" prefHeight="289.0" prefWidth="596.0">
+                     <content>
+                        <VBox fx:id="containerTests" prefHeight="285.0" prefWidth="595.0" />
+                     </content>
+                  </ScrollPane>
+                  <Button fx:id="createTestButton" layoutX="477.0" layoutY="359.0" mnemonicParsing="false" onAction="#clickOnCreateTestButton" prefHeight="30.0" prefWidth="143.0" text="Создать тест" />
+                  <Label fx:id="errorMessageTab2" alignment="CENTER" layoutX="63.0" layoutY="23.0" prefHeight="18.0" prefWidth="508.0" textFill="#d11010" />
+                  <Button fx:id="refreshButton" layoutX="16.0" layoutY="359.0" mnemonicParsing="false" onAction="#clickOnRefreshButton" prefHeight="30.0" prefWidth="173.0" text="Обновить " />
                </children>
             </AnchorPane>
          </content>
     </Tab>
       <Tab text="Результаты тестов">
          <content>
-            <ScrollPane prefHeight="200.0" prefWidth="200.0" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <AnchorPane layoutX="-4.0" layoutY="-4.0" prefHeight="402.0" prefWidth="644.0">
+                     <children>
+                        <ScrollPane layoutX="41.0" layoutY="35.0" prefHeight="320.0" prefWidth="539.0">
+                           <content>
+                              <VBox fx:id="vBoxTab3" prefHeight="314.0" prefWidth="542.0" />
+                           </content>
+                        </ScrollPane>
+                        <Button fx:id="refresh" layoutX="450.0" layoutY="366.0" mnemonicParsing="false" onAction="#onClickRefreshTab3" prefHeight="30.0" prefWidth="132.0" text="Обновить" />
+                        <Label fx:id="errorMessageTab3" alignment="CENTER" layoutX="41.0" layoutY="7.0" prefHeight="25.0" prefWidth="543.0" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
          </content>
       </Tab>
   </tabs>

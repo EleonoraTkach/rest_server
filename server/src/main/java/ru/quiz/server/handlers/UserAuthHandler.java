@@ -45,19 +45,26 @@ public class UserAuthHandler implements HttpHandler {
             while ((line = reader.readLine()) != null) {
                 requestBody.append(line);
             }
-
+            System.out.println(requestBody);
             try {
                 User user = mapper.readValue(requestBody.toString(), User.class);
-                CriteriaBuilder builder = session.getCriteriaBuilder();
+                System.out.println(user.toString());
+                /*CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaQuery<User> criteria = builder.createQuery(User.class);
                 Root<User> root = criteria.from(User.class);
                 Predicate login = builder.equal(root.get("email"), user.getEmail());
                 Predicate password = builder.equal(root.get("password"), user.getPassword());
                 criteria.select(root).where(builder.and(login, password));
                 Query<User> qwery = session.createQuery(criteria);
-                List<User> list = qwery.getResultList();
+                List<User> list = qwery.getResultList();*/
+                String hql = "select u from User u where u.email = \'" + user.getEmail() + "\' and u.password = \'" + user.getPassword() + "\'";
+                System.out.println(hql);
+                Query queryAll = session.createQuery(hql, User.class);
+                List<User> list = queryAll.getResultList();
+                System.out.println(list.toString());
 
                 if (list == null || list.isEmpty()) {
+                    rCode = 400;
                     if (user.getEmail() == null || user.getPassword() == null){
                         str = "all fields must be filled in";
                     } else {

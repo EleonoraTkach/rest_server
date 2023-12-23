@@ -1,10 +1,8 @@
 package ru.quiz.server;
 
 import com.sun.net.httpserver.HttpServer;
-import ru.quiz.server.handlers.UserAuthHandler;
-import ru.quiz.server.handlers.UserRegisterHandler;
-import ru.quiz.server.handlers.UserUpdatePasswordAndEmailHandler;
-import ru.quiz.server.handlers.UserUpdatePasswordHandler;
+import org.hibernate.sql.Select;
+import ru.quiz.server.handlers.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -21,6 +19,19 @@ public class Server {
             httpServer.createContext("/user/auth", new UserAuthHandler());
             httpServer.createContext("/user/updatePassword", new UserUpdatePasswordHandler());
             httpServer.createContext("/user/updatePasswordAndEmail", new UserUpdatePasswordAndEmailHandler());
+            httpServer.createContext("/user/createTest", new CreateTestHandler());
+            httpServer.createContext("/user/selectTests", new SelectTestsHandler());
+            httpServer.createContext("/user/selectQuestions", new SelectQuestionsAndAnswersHandler());
+            httpServer.createContext("/user/selectUsers", new SelectUsersHandler());
+            httpServer.createContext("/user/selectAppoint", new SelectAppointHandler());
+            httpServer.createContext("/user/selectResultTest", new SelectResultTestHandler());
+            httpServer.createContext("/user/updateResult", new UpdateResultTestHandler());
+            httpServer.createContext("/user/selectTestsStudents", new SelectTestsStudentsHandler());
+            httpServer.createContext("/user/selectResultTestYour", new SelectResultYourTestHandler());
+            httpServer.createContext("/user/selectUsersConfirm", new SelectUsersConfirmHandler());
+            httpServer.createContext("/user/updateConfirm", new UpdateConfirmHandler());
+            httpServer.createContext("/user/deleteUser", new DeleteUserHandler());
+            httpServer.createContext("/user/selectUsersAll", new SelectUsersAllHandler());
             httpServer.start();
         } catch (IOException e) {
             throw new RuntimeException(e);

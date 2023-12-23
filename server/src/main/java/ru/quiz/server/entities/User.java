@@ -1,6 +1,7 @@
 package ru.quiz.server.entities;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -21,6 +22,14 @@ public class User {
     private String role;
     @Column(name = "is_validated", nullable = false)
     private Boolean is_validated;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(fullName, user.fullName) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(role, user.role) && Objects.equals(is_validated, user.is_validated);
+    }
 
     public void setRole(String role) {
         this.role = role;
@@ -69,5 +78,17 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                ", is_validated=" + is_validated +
+                '}';
     }
 }
