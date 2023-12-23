@@ -8,8 +8,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
-import ru.quiz.server.entities.Appoint;
-import ru.quiz.server.entities.Test;
 import ru.quiz.server.entities.User;
 
 import java.io.BufferedReader;
@@ -20,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 
-public class SelectAppointHandler implements HttpHandler {
+public class SelectUsersAllHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
@@ -40,21 +38,19 @@ public class SelectAppointHandler implements HttpHandler {
             while ((line = reader.readLine()) != null) {
                 requestBody.append(line);
             }
-            System.out.println(requestBody.toString());
+            System.out.println(requestBody);
+
             try {
-                Appoint appoint = mapper.readValue(requestBody.toString(), Appoint.class);
-                String hql = "select a from Appoint a where a.idStudent = " + appoint.getIdStudent() + " and a.idTest = " + + appoint.getIdTest() + " and a.result IS NULL";
-                Query<Appoint> query = session.createQuery(hql , Appoint.class);
-                List<Appoint> list = query.getResultList();
-                if (list == null || list.isEmpty()){
-                    session.save(appoint);
-                    transaction.commit();
-                    System.out.println(appoint);
-                    str = "\"success\"";
-                } else {
-                    rCode = 400;
-                    str = "\"this test was appointed for this student\"";
-                }
+                User user = mapper.readValue(requestBody.toString(), User.class);
+                String hql = "select u from User u where u.id <> 53 and u.id <> " + user.getId();
+                Query queryAll = session.createQuery(hql, User.class);
+                List<User> usersAll = queryAll.getResultList();
+                System.out.println(usersAll);
+
+                String json = mapper.writeValueAsString (usersAll);
+                System.out.println (json);
+                response.put("\"users\"", json);
+                str = "\"success\"";
 
             } catch (Exception e){
                 if (transaction != null) {
@@ -62,7 +58,7 @@ public class SelectAppointHandler implements HttpHandler {
                 }
                 e.printStackTrace();
                 rCode = 400;
-                str = "\"can't appoint\"";
+                str = "can't do this module";
             } finally {
                 if (session != null) {
                     session.close();
@@ -75,7 +71,7 @@ public class SelectAppointHandler implements HttpHandler {
             session.close();
             sessionFactory.close();
             rCode = 400;
-            str = "\"method of requrest is wrong\"";
+            str = "method of requrest is wrong";
         }
 
         response.put("\"message\"", str);

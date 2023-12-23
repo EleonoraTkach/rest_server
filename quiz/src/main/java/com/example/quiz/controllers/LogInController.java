@@ -14,6 +14,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,6 +36,22 @@ public class LogInController {
     private Hyperlink logUpLink;
     @FXML
     private Button logInButton;
+    public String securePassword(String password) {
+        byte[] bytesOfPwd = password.getBytes(StandardCharsets.UTF_8);
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(bytesOfPwd);
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     @FXML
     private void clickOnLogInButton() {
         logInExeption.setText("");
@@ -51,8 +69,8 @@ public class LogInController {
             connection.setDoOutput(true);
 
             // Создаем тело запроса
-            String requestBody = "{\"email\": \"" + strLogin + "\", \"password\": \"" + strPassword + "\"}";
-            System.out.println(requestBody);
+            String requestBody = "{\"email\": \"" + strLogin + "\", \"password\": \"" + securePassword(strPassword) + "\"}";
+            System.out.println(requestBody + " " + securePassword(strPassword));
             // Получаем поток для записи данных в тело запроса
             try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
                 wr.write(requestBody.getBytes(StandardCharsets.UTF_8));
@@ -138,7 +156,7 @@ public class LogInController {
     private void clickLogIn(String path) throws IOException{
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path));
-            Scene scene = new Scene(fxmlLoader.load(), 500, 450);
+            Scene scene = new Scene(fxmlLoader.load(), 600, 450);
             Stage stage = (Stage) logInButton.getScene().getWindow();;
             stage.setTitle("Личный кабинет");
             stage.setScene(scene);

@@ -8,8 +8,9 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.quiz.controllers.LkAdminController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.quiz.controllers.LkAdminController">
   <tabs>
     <Tab text="Личный кабинет">
       <content>
@@ -36,20 +37,40 @@
     </Tab>
     <Tab text="Подтверждение регистрации">
          <content>
-            <ScrollPane prefHeight="200.0" prefWidth="200.0">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="370.0" prefWidth="588.0" />
-              </content>
-            </ScrollPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <AnchorPane prefHeight="343.0" prefWidth="600.0">
+                     <children>
+                        <Label fx:id="errorMessageTab2" layoutX="17.0" layoutY="14.0" prefHeight="18.0" prefWidth="565.0" />
+                        <ScrollPane layoutX="14.0" layoutY="38.0" prefHeight="258.0" prefWidth="567.0">
+                           <content>
+                              <VBox fx:id="vBoxTab2" prefHeight="258.0" prefWidth="567.0" />
+                           </content>
+                        </ScrollPane>
+                        <Button fx:id="refreshButton" layoutX="433.0" layoutY="304.0" mnemonicParsing="false" onAction="#clickOnRefreshButton" prefHeight="30.0" prefWidth="152.0" text="Обновить" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
          </content>
     </Tab>
-      <Tab text="Сообщения об ошибках">
+      <Tab text="Удаление пользователей">
          <content>
-            <ScrollPane prefHeight="200.0" prefWidth="200.0">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="331.0" prefWidth="579.0" />
-              </content>
-            </ScrollPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <AnchorPane layoutY="3.0" prefHeight="342.0" prefWidth="600.0">
+                     <children>
+                        <Label fx:id="errorMessageTab3" alignment="CENTER" layoutX="20.0" layoutY="14.0" prefHeight="18.0" prefWidth="566.0" />
+                        <ScrollPane layoutX="18.0" layoutY="23.0" prefHeight="249.0" prefWidth="566.0">
+                           <content>
+                              <VBox fx:id="vBoxTab3" prefHeight="247.0" prefWidth="567.0" />
+                           </content>
+                        </ScrollPane>
+                        <Button fx:id="refreshButtonTab3" layoutX="452.0" layoutY="289.0" mnemonicParsing="false" onAction="#clickOnRefreshButtonTab3" prefHeight="30.0" prefWidth="127.0" text="Обновить" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
          </content>
       </Tab>
   </tabs>

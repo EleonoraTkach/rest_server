@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -45,6 +47,22 @@ public class LogUpController implements Initializable {
         ObservableList<String> variants = FXCollections.observableArrayList("Cтудент", "Преподаватель", "Администратор");
         role.setItems(variants);
     }
+    public String securePassword(String password) {
+        byte[] bytesOfPwd = password.getBytes(StandardCharsets.UTF_8);
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(bytesOfPwd);
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public void clickOnSendButton() {
         String fioUser = fio.getText();
         String emailUser = email.getText();
@@ -60,7 +78,7 @@ public class LogUpController implements Initializable {
                     connection.setRequestMethod("POST");
                     connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                     connection.setDoOutput(true);
-                    String requestBody = "{\"fullName\" : \"" + fioUser + "\", \"email\": \"" + emailUser + "\", \"password\": \"" + password1User + "\", \"role\": \"" + role.getValue() + "\", \"is_validated\": \"" + is_validated + "\"}";
+                    String requestBody = "{\"fullName\" : \"" + fioUser + "\", \"email\": \"" + emailUser + "\", \"password\": \"" + securePassword(password1User) + "\", \"role\": \"" + role.getValue() + "\", \"is_validated\": \"" + is_validated + "\"}";
                     try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
                         wr.write(requestBody.getBytes(StandardCharsets.UTF_8));
                     }
