@@ -19,7 +19,7 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
     @Column(name = "role_user", nullable = false)
-    private String role;
+    private Integer role;
     @Column(name = "is_validated", nullable = false)
     private Boolean is_validated;
 
@@ -29,22 +29,6 @@ public class User {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return Objects.equals(id, user.id) && Objects.equals(fullName, user.fullName) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(role, user.role) && Objects.equals(is_validated, user.is_validated);
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public void setIs_validated(Boolean is_validated) {
-        this.is_validated = is_validated;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public Boolean getIs_validated() {
-        return is_validated;
     }
 
     public Long getId() {
@@ -67,7 +51,6 @@ public class User {
         return email;
     }
 
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -80,6 +63,22 @@ public class User {
         this.password = password;
     }
 
+    public Integer getRole() {
+        return role;
+    }
+
+    public void setRole(Integer role) {
+        this.role = role;
+    }
+
+    public Boolean getIs_validated() {
+        return is_validated;
+    }
+
+    public void setIs_validated(Boolean is_validated) {
+        this.is_validated = is_validated;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -87,7 +86,7 @@ public class User {
                 ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
+                ", role=" + role +
                 ", is_validated=" + is_validated +
                 '}';
     }

@@ -2,6 +2,7 @@ package com.example.quiz.controllers;
 
 import com.example.quiz.HelloApplication;
 import com.example.quiz.addElements.ResponseCreateTest;
+import com.example.quiz.addElements.TypeQuestion;
 import com.example.quiz.objects.Answer;
 import com.example.quiz.objects.Question;
 import com.example.quiz.objects.Test;
@@ -145,12 +146,12 @@ public class CreateTestController implements Initializable {
         ComboBox typeQuestions = (ComboBox) content.getChildren().get(3);
 
         if (typeQuestions.getValue() != null && !(textField.getText() == null || textField.getText().equals(""))) {
-            newQuestion = new Question(textField.getText(), (String) typeQuestions.getValue());
+            newQuestion = new Question(textField.getText(), TypeQuestion.getValueByDescription((String) typeQuestions.getValue()));
             labelError.setText("");
             Object value = typeQuestions.getValue();
             Boolean isSelectOneRadiobutton = false;
             if (content.getChildren().get(6).getClass() != Line.class) {
-                if (value.equals("Выбор одного правильного ответа")) {
+                if (value.equals(TypeQuestion.ONEASWER.getDescription())) {
                     for (int i = 6; i < 10; i++) {
                         HBox hbox = (HBox) content.getChildren().get(i);
                         TextField textFieldAnswer = (TextField) hbox.getChildren().get(0);
@@ -180,7 +181,7 @@ public class CreateTestController implements Initializable {
                     }
 
                     return newQuestion;
-                } else if (value.equals("Выбор нескольких правильных ответов")) {
+                } else if (value.equals(TypeQuestion.MANYANSWER.getDescription())) {
                     Integer kolvo = 0;
                     for (int i = 6; i < 10; i++) {
                         HBox hbox = (HBox) content.getChildren().get(i);
@@ -208,15 +209,17 @@ public class CreateTestController implements Initializable {
                         newQuestion = null;
                         return newQuestion;
                     } else {
+                        Double scale = Math.pow(10, 2);
+                        Double result = Math.ceil(1.0/kolvo * scale) / scale;
                         for (int j = 0; j < 4; j++) {
                             if (newQuestion.getAnswers().get(j).getRightans()) {
-                                newQuestion.getAnswers().get(j).setKoefPoint(1.0/kolvo);
+                                newQuestion.getAnswers().get(j).setKoefPoint(result);
                             }
                         }
                         return newQuestion;
                     }
 
-                } else if (value.equals("Вписать ответ")) {
+                } else if (value.equals(TypeQuestion.TEXTANSWER.getDescription())) {
                     TextField textFieldAnswer = (TextField) content.getChildren().get(6);
                     if (!(textFieldAnswer.getText() == null || textFieldAnswer.getText().equals(""))) {
                         Answer answer = new Answer(textFieldAnswer.getText(), true, 1.0);
@@ -245,7 +248,7 @@ public class CreateTestController implements Initializable {
     }
     private VBox addNewQuestion(Integer number) {
         ObservableList<Node> objects = FXCollections.observableArrayList();
-        ObservableList<String> variants = FXCollections.observableArrayList("Выбор одного правильного ответа", "Выбор нескольких правильных ответов", "Вписать ответ");
+        ObservableList<String> variants = FXCollections.observableArrayList(TypeQuestion.ONEASWER.getDescription(), TypeQuestion.MANYANSWER.getDescription(), TypeQuestion.TEXTANSWER.getDescription());
         Label labelError = new Label();
         labelError.setAlignment(Pos.CENTER);
         labelError.setPadding(new Insets(5, 5, 5, 5));
@@ -263,7 +266,7 @@ public class CreateTestController implements Initializable {
             if (typeQuestions.getValue() != null && !(text.getText() == null || text.getText().equals(""))) {
                 labelError.setText("");
                 Object value = typeQuestions.getValue();
-                if (value.equals("Выбор одного правильного ответа")) {
+                if (value.equals(TypeQuestion.ONEASWER.getDescription())) {
                     while (6 < content.getChildren().size()) {
                         content.getChildren().remove(6);
                     }
@@ -290,7 +293,7 @@ public class CreateTestController implements Initializable {
                         content.getChildren().addAll(hbox);
                     }
                     content.getChildren().addAll(line);
-                } else if (value.equals("Выбор нескольких правильных ответов")) {
+                } else if (value.equals(TypeQuestion.MANYANSWER.getDescription())) {
                     while (6 < content.getChildren().size()) {
                         content.getChildren().remove(6);
                     }
@@ -302,7 +305,7 @@ public class CreateTestController implements Initializable {
                         content.getChildren().addAll(hbox);
                     }
                     content.getChildren().addAll(line);
-                } else if (value.equals("Вписать ответ")) {
+                } else if (value.equals(TypeQuestion.TEXTANSWER.getDescription())) {
 
                     while (6 < content.getChildren().size()) {
                         System.out.println(content.getChildren().size());

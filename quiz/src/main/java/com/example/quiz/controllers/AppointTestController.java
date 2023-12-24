@@ -39,9 +39,9 @@ public class AppointTestController implements Initializable {
         HBox container = new HBox();
         VBox vBox = new VBox();
         Label errorLab = new Label();
-        Label fio = new Label(newUser.getFullName());
-        Long num = user.getId() + 135;
-        Label unicNumber = new Label(num.toString());
+        Label fio = new Label("ФИО: " + newUser.getFullName());
+        Long num = newUser.getId() + 135;
+        Label unicNumber = new Label("Уникальный номер: " + num.toString());
         Button button = new Button("Назначить");
         vBox.getChildren().addAll(unicNumber, fio, errorLab);
         container.getChildren().addAll(vBox,button);

@@ -28,6 +28,10 @@ public class Server {
             httpServer.createContext("/user/updateResult", new UpdateResultTestHandler());
             httpServer.createContext("/user/selectTestsStudents", new SelectTestsStudentsHandler());
             httpServer.createContext("/user/selectResultTestYour", new SelectResultYourTestHandler());
+            httpServer.createContext("/user/selectUsersConfirm", new SelectUsersConfirmHandler());
+            httpServer.createContext("/user/updateConfirm", new UpdateConfirmHandler());
+            httpServer.createContext("/user/deleteUser", new DeleteUserHandler());
+            httpServer.createContext("/user/selectUsersAll", new SelectUsersAllHandler());
             httpServer.start();
         } catch (IOException e) {
             throw new RuntimeException(e);

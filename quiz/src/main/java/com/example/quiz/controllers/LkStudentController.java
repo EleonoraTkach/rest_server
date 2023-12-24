@@ -30,6 +30,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -86,6 +88,22 @@ public class LkStudentController implements Initializable {
         refreshTab3();
 
     }
+    public String securePassword(String password) {
+        byte[] bytesOfPwd = password.getBytes(StandardCharsets.UTF_8);
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(bytesOfPwd);
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     @FXML
     private void clickOnChangeButton() {
         if (changeButton.getText().equals("Редактировать профиль")) {
@@ -99,6 +117,7 @@ public class LkStudentController implements Initializable {
             System.out.println(newPasswordTwo.getText() + " " + newPasswordOne.getText());
             if (!newPasswordTwo.getText().equals(newPasswordOne.getText())) {
                 errorMessage.setText("Пароли не совпадают");
+
             } else {
                 if (login.getText() == null) {
                     errorMessage.setText("Поле с логином должно быть заполнено");
@@ -106,7 +125,7 @@ public class LkStudentController implements Initializable {
                     try {
                         if (login.getText().equals(user.getEmail()) && !newPasswordOne.getText().equals(user.getPassword())) {
                             System.out.println(1);
-                            String requestBody = "{\"id\": \"" + user.getId() + "\",\"password\": \"" + newPasswordOne.getText() + "\"}";
+                            String requestBody = "{\"id\": \"" + user.getId() + "\",\"password\": \"" + securePassword(newPasswordOne.getText()) + "\"}";
                             StringBuffer response = sendHTTP("http://localhost:8000/user/updatePassword", requestBody);
                             if (response != null) {
                                 HashMap<String, String> parsedResponse = jsonObject(response);
@@ -123,7 +142,7 @@ public class LkStudentController implements Initializable {
                             if (newPasswordOne.getText().equals(user.getPassword())) {
                                 requestBody = "{\"id\": \"" + user.getId() + "\",\"email\": \"" + login.getText() + "\"}";
                             } else {
-                                requestBody = "{\"id\": \"" + user.getId() + "\",\"email\": \"" + login.getText() + "\",\"password\": \"" + newPasswordOne.getText() + "\"}";
+                                requestBody = "{\"id\": \"" + user.getId() + "\",\"email\": \"" + login.getText() + "\",\"password\": \"" + securePassword(newPasswordOne.getText()) + "\"}";
                             }
                             StringBuffer response = sendHTTP("http://localhost:8000/user/updatePasswordAndEmail", requestBody);
 
@@ -263,6 +282,7 @@ public class LkStudentController implements Initializable {
                     refreshTab2();
                     vBoxTab3.getChildren().clear();
                     refreshTab3();
+
                 });
                 stage.setTitle("Тест");
                 Scene scene = new Scene(fxmlLoader.load(), 500, 450);

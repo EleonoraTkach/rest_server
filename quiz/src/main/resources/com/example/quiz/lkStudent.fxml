@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.quiz.controllers.LkStudentController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="1200.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.quiz.controllers.LkStudentController">
   <tabs>
     <Tab text="Личный кабинет">
       <content>
@@ -23,7 +23,7 @@
                   <TextField fx:id="login" layoutX="198.0" layoutY="78.0" prefHeight="26.0" prefWidth="316.0" />
                   <TextField fx:id="type" layoutX="198.0" layoutY="120.0" prefHeight="26.0" prefWidth="316.0" text="Студент" />
                   <TextField fx:id="fio" layoutX="198.0" layoutY="40.0" prefHeight="26.0" prefWidth="315.0" />
-                  <Button fx:id="changeButton" layoutX="64.0" layoutY="294.0" mnemonicParsing="false" onAction="#clickOnChangeButton" text="Редактировать профиль" textFill="WHITE" />
+                  <Button fx:id="changeButton" layoutX="64.0" layoutY="294.0" mnemonicParsing="false" onAction="#clickOnChangeButton" text="Редактировать профиль" />
                   <Label fx:id="oldLabel" layoutX="100.0" layoutY="161.0" text="Новый пароль:" />
                   <PasswordField fx:id="newPasswordOne" layoutX="195.0" layoutY="157.0" prefHeight="26.0" prefWidth="316.0" />
                   <Label fx:id="newLabel" layoutX="24.0" layoutY="205.0" text="Повторите пароль ещё раз:" />

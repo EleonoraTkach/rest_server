@@ -1,6 +1,7 @@
 package com.example.quiz.controllers;
 
 import com.example.quiz.HelloApplication;
+import com.example.quiz.addElements.Role;
 import com.example.quiz.objects.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,6 +15,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,8 +37,25 @@ public class LogInController {
     private Hyperlink logUpLink;
     @FXML
     private Button logInButton;
+    public String securePassword(String password) {
+        byte[] bytesOfPwd = password.getBytes(StandardCharsets.UTF_8);
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(bytesOfPwd);
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     @FXML
     private void clickOnLogInButton() {
+        System.out.println(securePassword("sidor"));
         logInExeption.setText("");
         String strLogin = loginLogIn.getText();
         String strPassword = passwordLogIn.getText();
@@ -51,8 +71,7 @@ public class LogInController {
             connection.setDoOutput(true);
 
             // Создаем тело запроса
-            String requestBody = "{\"email\": \"" + strLogin + "\", \"password\": \"" + strPassword + "\"}";
-            System.out.println(requestBody);
+            String requestBody = "{\"email\": \"" + strLogin + "\", \"password\": \"" + securePassword(strPassword) + "\"}";
             // Получаем поток для записи данных в тело запроса
             try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
                 wr.write(requestBody.getBytes(StandardCharsets.UTF_8));
@@ -94,16 +113,18 @@ public class LogInController {
                 System.out.println(parsedResponse);
                 if (parsedResponse.get("\"message\"").equals("\"success\"")) {
                     String path  = "";
-                    User user = new User(Long.parseLong(parsedResponse.get("\"id\"").replaceAll("\"", "")), parsedResponse.get("\"fullName\"").replaceAll("\"", ""), parsedResponse.get("\"email\"").replaceAll("\"", ""), parsedResponse.get("\"role\"").replaceAll("\"", ""), parsedResponse.get("\"password\"").replaceAll("\"", ""));
-                    if (user.getRole().equals("Преподаватель")) {
+                    User user = new User(Long.parseLong(parsedResponse.get("\"id\"").replaceAll("\"", "")), parsedResponse.get("\"fullName\"").replaceAll("\"", ""), parsedResponse.get("\"email\"").replaceAll("\"", ""), Integer.parseInt(parsedResponse.get("\"role\"").replaceAll("\"", "")), parsedResponse.get("\"password\"").replaceAll("\"", ""));
+                    if (user.getRole() == Role.TEACHER.getValue()) {
                         path = "lkPrepod.fxml";
                         LkPrepodController.setUser(user);
-                    } else if (user.getRole().equals("Администратор")) {
+                    } else if (user.getRole() == Role.ADMIN.getValue()) {
                         path = "lkAdmin.fxml";
                         LkAdminController.setUser(user);
-                    } else {
+                    } else if (user.getRole() == Role.STUDENT.getValue()){
                         path = "lkStudent.fxml";
                         LkStudentController.setUser(user);
+                    } else {
+                        logInExeption.setText("Пользователя с таким типом не существует");
                     }
                     clickLogIn(path);
                     System.out.println(user.toString());
@@ -138,7 +159,7 @@ public class LogInController {
     private void clickLogIn(String path) throws IOException{
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path));
-            Scene scene = new Scene(fxmlLoader.load(), 500, 450);
+            Scene scene = new Scene(fxmlLoader.load(), 650, 450);
             Stage stage = (Stage) logInButton.getScene().getWindow();;
             stage.setTitle("Личный кабинет");
             stage.setScene(scene);

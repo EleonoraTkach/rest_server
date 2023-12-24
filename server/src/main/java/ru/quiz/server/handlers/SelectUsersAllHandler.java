@@ -8,16 +8,17 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
-import ru.quiz.server.entities.Appoint;
-import ru.quiz.server.entities.Test;
 import ru.quiz.server.entities.User;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 
-public class UpdateResultTestHandler implements HttpHandler {
+public class SelectUsersAllHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
@@ -29,6 +30,7 @@ public class UpdateResultTestHandler implements HttpHandler {
         HashMap<String, String> response = new HashMap<>();
 
         if (requestMethod.equalsIgnoreCase("POST")) {
+            ObjectMapper mapper = new ObjectMapper();
             BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
             StringBuilder requestBody = new StringBuilder();
             String line;
@@ -37,29 +39,18 @@ public class UpdateResultTestHandler implements HttpHandler {
                 requestBody.append(line);
             }
             System.out.println(requestBody);
-            try {
-                String[] newPar = requestBody.toString().split(",");
-                String sql = "SELECT * FROM appoint WHERE id_test = " + Long.parseLong(newPar[0].replaceAll("[^\\d+]",""))
-                        + " and id_student = " + Long.parseLong(newPar[1].replaceAll("[^\\d+]","")) +
-                        " and appoint.result IS NULL";
-                Query<Appoint> query = session.createNativeQuery(sql , Appoint.class);
-                List<Appoint> list = query.getResultList();
-                if (list.isEmpty() || list == null) {
-                    System.out.println(list);
-                    rCode = 400;
-                    str = "\"can't appoint\"";
-                } else {
-                    Appoint lastApp = list.get(0);
-                    System.out.println(lastApp);
-                    Appoint appointNew = session.get(Appoint.class, lastApp.getId());
-                    System.out.println(newPar[2]);
-                    appointNew.setResult(Double.parseDouble(newPar[2].replaceAll("[^\\d+.\\d+]","")));
 
-                    session.update(appointNew);
-                    System.out.println(appointNew);
-                    transaction.commit();
-                    str = "\"success\"";
-                }
+            try {
+                User user = mapper.readValue(requestBody.toString(), User.class);
+                String hql = "select u from User u where u.id <> 53 and u.id <> " + user.getId();
+                Query queryAll = session.createQuery(hql, User.class);
+                List<User> usersAll = queryAll.getResultList();
+                System.out.println(usersAll);
+
+                String json = mapper.writeValueAsString (usersAll);
+                System.out.println (json);
+                response.put("\"users\"", json);
+                str = "\"success\"";
 
             } catch (Exception e){
                 if (transaction != null) {
@@ -67,7 +58,7 @@ public class UpdateResultTestHandler implements HttpHandler {
                 }
                 e.printStackTrace();
                 rCode = 400;
-                str = "\"can't appoint\"";
+                str = "can't do this module";
             } finally {
                 if (session != null) {
                     session.close();
@@ -80,7 +71,7 @@ public class UpdateResultTestHandler implements HttpHandler {
             session.close();
             sessionFactory.close();
             rCode = 400;
-            str = "\"method of requrest is wrong\"";
+            str = "method of requrest is wrong";
         }
 
         response.put("\"message\"", str);

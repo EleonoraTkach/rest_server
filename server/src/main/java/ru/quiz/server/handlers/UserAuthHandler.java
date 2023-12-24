@@ -49,14 +49,19 @@ public class UserAuthHandler implements HttpHandler {
             try {
                 User user = mapper.readValue(requestBody.toString(), User.class);
                 System.out.println(user.toString());
-                CriteriaBuilder builder = session.getCriteriaBuilder();
+                /*CriteriaBuilder builder = session.getCriteriaBuilder();
                 CriteriaQuery<User> criteria = builder.createQuery(User.class);
                 Root<User> root = criteria.from(User.class);
                 Predicate login = builder.equal(root.get("email"), user.getEmail());
                 Predicate password = builder.equal(root.get("password"), user.getPassword());
                 criteria.select(root).where(builder.and(login, password));
                 Query<User> qwery = session.createQuery(criteria);
-                List<User> list = qwery.getResultList();
+                List<User> list = qwery.getResultList();*/
+                String hql = "select u from User u where u.email = \'" + user.getEmail() + "\' and u.password = \'" + user.getPassword() + "\'";
+                System.out.println(hql);
+                Query queryAll = session.createQuery(hql, User.class);
+                List<User> list = queryAll.getResultList();
+                System.out.println(list.toString());
 
                 if (list == null || list.isEmpty()) {
                     rCode = 400;
@@ -72,7 +77,7 @@ public class UserAuthHandler implements HttpHandler {
                         System.out.println(list.get(0).getId() + "");
                         response.put("id", list.get(0).getId() + "");
                         response.put("fullName", list.get(0).getFullName());
-                        response.put("role", list.get(0).getRole());
+                        response.put("role", list.get(0).getRole().toString());
                         response.put("email", list.get(0).getEmail());
                         response.put("password", list.get(0).getPassword());
                     } else {
