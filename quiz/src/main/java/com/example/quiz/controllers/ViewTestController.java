@@ -3,6 +3,8 @@ package com.example.quiz.controllers;
 import com.example.quiz.HelloApplication;
 import com.example.quiz.addElements.AnswerQuestionAndAnswers;
 import com.example.quiz.addElements.AnswerTest;
+import com.example.quiz.addElements.Role;
+import com.example.quiz.addElements.TypeQuestion;
 import com.example.quiz.objects.Answer;
 import com.example.quiz.objects.Question;
 import com.example.quiz.objects.Test;
@@ -62,13 +64,11 @@ public class ViewTestController implements Initializable {
         objects = FXCollections.observableArrayList();
         for (int i = 0; i < questions.size(); i++) {
             VBox content = new VBox();
-            if (user.getRole().equals("Студент")) {
+            if (user.getRole() == Role.STUDENT.getValue()) {
                 content.getChildren().addAll(new Label("Bопрос " + (i + 1) + ": "), addQuestionStudent(questions.get(i),i,questions.size()));
-            } else {
+            } else if (user.getRole() == Role.TEACHER.getValue()) {
                 content.getChildren().addAll(new Label("Bопрос " + (i + 1) + ": "), addQuestionPrepod(questions.get(i),i,questions.size()));
             }
-            //content.getChildren().addAll(new Label("Bопрос " + (i + 1) + ": "), addQuestionPrepod(questions.get(i),i,questions.size()));
-            //content.getChildren().addAll(new Label("Bопрос " + (i + 1) + ": "), addQuestionStudent(questions.get(i),i,questions.size()));
             objects.add(content);
         }
         title.setText(test.getTitle());
@@ -79,7 +79,7 @@ public class ViewTestController implements Initializable {
         VBox container = new VBox();
         List<Answer> answers = question.getAnswers();
         container.getChildren().addAll(new Label(question.getQuestion()));
-        if (question.getTypeQuestion().equals("Выбор одного правильного ответа")) {
+        if (question.getTypeQuestion() == TypeQuestion.ONEASWER.getValue()) {
             ToggleGroup group = new ToggleGroup();
             RadioButton rad1 = new RadioButton();
             RadioButton rad2 = new RadioButton();
@@ -103,7 +103,7 @@ public class ViewTestController implements Initializable {
                 container.getChildren().addAll(hbox);
             }
 
-        } else if (question.getTypeQuestion().equals("Выбор нескольких правильных ответов")) {
+        } else if (question.getTypeQuestion() == TypeQuestion.MANYANSWER.getValue()) {
             for (int i = 0; i < 4; i++) {
                 Answer answer = answers.get(i);
                 HBox hbox = new HBox(new CheckBox(), new Label(answer.getAnswer()));
@@ -127,11 +127,15 @@ public class ViewTestController implements Initializable {
         });
         Button buttonEnd = new Button("End Test");
         buttonEnd.setOnAction(event -> {
+            result = 0.0;
             countResult();
+            result = 100 * result/test.getQuantity();
+            Double scale = Math.pow(10, 2);
+            result = Math.ceil(result * scale) / scale;
+            System.out.println(result + " до запроса");
             if (httpSaveResult()) {
-                result = 0.0;
                 VBox containerNew = new VBox();
-                Label label = new Label("Ваш результат: " + result/test.getQuantity() * 100);
+                Label label = new Label("Ваш результат: " + result);
                 containerNew.getChildren().add(label);
                 System.out.println(objects.size() + " " + currentIndex);
                 objects.add(containerNew);
@@ -163,7 +167,7 @@ public class ViewTestController implements Initializable {
            VBox nowVBox = (VBox) objects.get(i).getChildren().get(1);
            Question questionNow = questions.get(i);
            List<Answer> answers = questions.get(i).getAnswers();
-           if (questionNow.getTypeQuestion().equals("Выбор одного правильного ответа")) {
+           if (questionNow.getTypeQuestion() == TypeQuestion.ONEASWER.getValue()) {
                for (int j = 0;j < answers.size();j++) {
                    HBox hBox = (HBox) nowVBox.getChildren().get(j + 1);
                    RadioButton rad = (RadioButton) hBox.getChildren().get(0);
@@ -171,13 +175,20 @@ public class ViewTestController implements Initializable {
                        result += answers.get(j).getKoefPoint();
                    }
                }
-           } else if (questionNow.getTypeQuestion().equals("Выбор нескольких правильных ответов")) {
+           } else if (questionNow.getTypeQuestion() == TypeQuestion.MANYANSWER.getValue()) {
+               Double count = 0.0;
+               Integer kolvo = 0;
                for (int j = 0;j < answers.size();j++) {
                    HBox hBox = (HBox) nowVBox.getChildren().get(j + 1);
                    CheckBox checkBox = (CheckBox) hBox.getChildren().get(0);
                    if (checkBox.isSelected() == answers.get(j).getRightans()) {
-                       result += answers.get(j).getKoefPoint();
+                       count += answers.get(j).getKoefPoint();
+                   } else if (!answers.get(j).getRightans()) {
+                       kolvo++;
                    }
+               }
+               if (count != 0.0 && kolvo == 0) {
+                   result += count;
                }
            } else {
                TextField textField = (TextField) nowVBox.getChildren().get(1);
@@ -193,7 +204,7 @@ public class ViewTestController implements Initializable {
         VBox container = new VBox();
         List<Answer> answers = question.getAnswers();
         container.getChildren().addAll(new Label(question.getQuestion()));
-        if (question.getTypeQuestion().equals("Выбор одного правильного ответа")) {
+        if (question.getTypeQuestion() == TypeQuestion.ONEASWER.getValue()) {
             ToggleGroup group = new ToggleGroup();
             RadioButton rad1 = new RadioButton();
             RadioButton rad2 = new RadioButton();
@@ -217,7 +228,7 @@ public class ViewTestController implements Initializable {
                 container.getChildren().addAll(hbox);
             }
 
-        } else if (question.getTypeQuestion().equals("Выбор нескольких правильных ответов")) {
+        } else if (question.getTypeQuestion() == TypeQuestion.MANYANSWER.getValue()) {
             for (int i = 0; i < 4; i++) {
                 Answer answer = answers.get(i);
                 CheckBox checkBox = new CheckBox();
@@ -316,14 +327,16 @@ public class ViewTestController implements Initializable {
     }
 
     private Boolean httpSaveResult(){
+        System.out.println(result + " в запроса");
         errorMessage.setText("");
         try {
+
             URL url = new URL("http://localhost:8000/user/updateResult");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             connection.setDoOutput(true);
-            String requestBody = "{\"idTest\": \"" + test.getId() + "\", \"idStudent\": \"" + user.getId() + "\",\"result: \"" + result / test.getQuantity() + "\"}";
+            String requestBody = "{\"idTest\": \"" + test.getId() + "\", \"idStudent\": \"" + user.getId() + "\",\"result: \"" + result + "\"}";
             System.out.println(requestBody);
             try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
                 wr.write(requestBody.getBytes(StandardCharsets.UTF_8));

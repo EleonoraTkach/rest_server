@@ -77,7 +77,7 @@ public class UserAuthHandler implements HttpHandler {
                         System.out.println(list.get(0).getId() + "");
                         response.put("id", list.get(0).getId() + "");
                         response.put("fullName", list.get(0).getFullName());
-                        response.put("role", list.get(0).getRole());
+                        response.put("role", list.get(0).getRole().toString());
                         response.put("email", list.get(0).getEmail());
                         response.put("password", list.get(0).getPassword());
                     } else {

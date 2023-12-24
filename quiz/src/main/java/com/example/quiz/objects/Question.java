@@ -10,13 +10,13 @@ public class Question {
     private Long id;
     private Long idTest;
     private String question;
-    private String typeQuestion;
+    private Integer typeQuestion;
     List<Answer> answers = new ArrayList();
 
     @JsonCreator
     public Question(
             @JsonProperty("question") String question,
-            @JsonProperty("typeQuestion") String typeQuestion
+            @JsonProperty("typeQuestion") Integer typeQuestion
     ) {
         this.question = question;
         this.typeQuestion = typeQuestion;
@@ -46,11 +46,11 @@ public class Question {
         this.question = question;
     }
 
-    public String getTypeQuestion() {
+    public Integer getTypeQuestion() {
         return typeQuestion;
     }
 
-    public void setTypeQuestion(String typeQuestion) {
+    public void setTypeQuestion(Integer typeQuestion) {
         this.typeQuestion = typeQuestion;
     }
 

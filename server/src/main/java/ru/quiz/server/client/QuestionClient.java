@@ -11,7 +11,7 @@ public class QuestionClient {
     private Long id;
     private Long idTest;
     private String question;
-    private String typeQuestion;
+    private Integer typeQuestion;
     List<AnswerClient> answers = new ArrayList();
 
     @JsonCreator
@@ -20,7 +20,7 @@ public class QuestionClient {
             @JsonProperty("id") Long id,
             @JsonProperty("idTest") Long idTest,
             @JsonProperty("question") String question,
-            @JsonProperty("typeQuestion") String typeQuestion,
+            @JsonProperty("typeQuestion") Integer typeQuestion,
             @JsonProperty("answers") List<AnswerClient> answers
 
     ) {
@@ -56,11 +56,11 @@ public class QuestionClient {
         this.question = question;
     }
 
-    public String getTypeQuestion() {
+    public Integer getTypeQuestion() {
         return typeQuestion;
     }
 
-    public void setTypeQuestion(String typeQuestion) {
+    public void setTypeQuestion(Integer typeQuestion) {
         this.typeQuestion = typeQuestion;
     }
 

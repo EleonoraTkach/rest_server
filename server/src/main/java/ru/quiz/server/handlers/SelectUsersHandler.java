@@ -44,9 +44,9 @@ public class SelectUsersHandler implements HttpHandler {
             String idTest = requestBody.toString().replaceAll("[^\\d+]","");
             System.out.println(idTest);
             try {
-                String hql = "select u from User u where u.role = \'Студент\' and u.is_validated = true";
+                String hql = "select u from User u where u.role = 3 and u.is_validated = true";
 
-                String sql = "SELECT users.* FROM users INNER JOIN appoint ON appoint.id_student = users.id and appoint.result IS NULL and appoint.id_test = \'" + idTest + "\' WHERE users.role_user = 'Студент' and users.is_validated = true";
+                String sql = "SELECT users.* FROM users INNER JOIN appoint ON appoint.id_student = users.id and appoint.result IS NULL and appoint.id_test = \'" + idTest + "\' WHERE users.role_user = 3 and users.is_validated = true";
                 Query queryAll = session.createQuery(hql, User.class);
                 List<User> usersAll = queryAll.getResultList();
                 System.out.println(usersAll);

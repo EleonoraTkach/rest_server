@@ -63,7 +63,7 @@ public class DeleteUserHandler implements HttpHandler {
                     transaction.rollback();
                 }
                 rCode = 400;
-                str = "Не удалось отклонить регистрацию пользователя";
+                str = "Не удалось убрать из системы пользователя";
             } finally {
                 if (session != null) {
                     session.close();

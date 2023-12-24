@@ -1,6 +1,7 @@
 package com.example.quiz.controllers;
 
 import com.example.quiz.HelloApplication;
+import com.example.quiz.addElements.Role;
 import com.example.quiz.objects.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -54,6 +55,7 @@ public class LogInController {
     }
     @FXML
     private void clickOnLogInButton() {
+        System.out.println(securePassword("sidor"));
         logInExeption.setText("");
         String strLogin = loginLogIn.getText();
         String strPassword = passwordLogIn.getText();
@@ -70,7 +72,6 @@ public class LogInController {
 
             // Создаем тело запроса
             String requestBody = "{\"email\": \"" + strLogin + "\", \"password\": \"" + securePassword(strPassword) + "\"}";
-            System.out.println(requestBody + " " + securePassword(strPassword));
             // Получаем поток для записи данных в тело запроса
             try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
                 wr.write(requestBody.getBytes(StandardCharsets.UTF_8));
@@ -112,16 +113,18 @@ public class LogInController {
                 System.out.println(parsedResponse);
                 if (parsedResponse.get("\"message\"").equals("\"success\"")) {
                     String path  = "";
-                    User user = new User(Long.parseLong(parsedResponse.get("\"id\"").replaceAll("\"", "")), parsedResponse.get("\"fullName\"").replaceAll("\"", ""), parsedResponse.get("\"email\"").replaceAll("\"", ""), parsedResponse.get("\"role\"").replaceAll("\"", ""), parsedResponse.get("\"password\"").replaceAll("\"", ""));
-                    if (user.getRole().equals("Преподаватель")) {
+                    User user = new User(Long.parseLong(parsedResponse.get("\"id\"").replaceAll("\"", "")), parsedResponse.get("\"fullName\"").replaceAll("\"", ""), parsedResponse.get("\"email\"").replaceAll("\"", ""), Integer.parseInt(parsedResponse.get("\"role\"").replaceAll("\"", "")), parsedResponse.get("\"password\"").replaceAll("\"", ""));
+                    if (user.getRole() == Role.TEACHER.getValue()) {
                         path = "lkPrepod.fxml";
                         LkPrepodController.setUser(user);
-                    } else if (user.getRole().equals("Администратор")) {
+                    } else if (user.getRole() == Role.ADMIN.getValue()) {
                         path = "lkAdmin.fxml";
                         LkAdminController.setUser(user);
-                    } else {
+                    } else if (user.getRole() == Role.STUDENT.getValue()){
                         path = "lkStudent.fxml";
                         LkStudentController.setUser(user);
+                    } else {
+                        logInExeption.setText("Пользователя с таким типом не существует");
                     }
                     clickLogIn(path);
                     System.out.println(user.toString());
@@ -156,7 +159,7 @@ public class LogInController {
     private void clickLogIn(String path) throws IOException{
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path));
-            Scene scene = new Scene(fxmlLoader.load(), 600, 450);
+            Scene scene = new Scene(fxmlLoader.load(), 650, 450);
             Stage stage = (Stage) logInButton.getScene().getWindow();;
             stage.setTitle("Личный кабинет");
             stage.setScene(scene);

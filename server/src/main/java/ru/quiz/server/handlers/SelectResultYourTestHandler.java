@@ -49,6 +49,7 @@ public class SelectResultYourTestHandler implements HttpHandler {
                         "WHERE appoint.id_student = " + idStudent + " and result IS NOT NULL";
                 Query query = session.createNativeQuery(sql);
                 List<Object []> results = query.getResultList();
+                Double scale = Math.pow(10, 2);
 
                 List<AnswerResult> resultList = new ArrayList<>();
                 for (Object [] obj : results) {
@@ -56,6 +57,7 @@ public class SelectResultYourTestHandler implements HttpHandler {
                     answerResult.setFioStudent ((String) obj[0]);
                     answerResult.setTitleTest ((String) obj[1]);
                     answerResult.setResult (Double.valueOf((Float) obj[2]));
+                    answerResult.setResult (Math.ceil(answerResult.getResult() * scale) / scale);
                     resultList.add(answerResult);
                     System.out.println(answerResult);
                 }

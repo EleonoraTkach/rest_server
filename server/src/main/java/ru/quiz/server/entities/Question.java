@@ -16,7 +16,7 @@ public class Question {
     @Column(name = "question", nullable = false)
     private String question;
     @Column(name = "type_question", nullable = false)
-    private String typeQuestion;
+    private Integer typeQuestion;
     public Question() {
         this.id = id;
         this.idTest = idTest;
@@ -24,7 +24,7 @@ public class Question {
         this.typeQuestion = typeQuestion;
     }
 
-    public Question(Long id, Long idTest, String question, String typeQuestion) {
+    public Question(Long id, Long idTest, String question, Integer typeQuestion) {
         this.id = id;
         this.idTest = idTest;
         this.question = question;
@@ -55,11 +55,11 @@ public class Question {
         this.question = question;
     }
 
-    public String getTypeQuestion() {
+    public Integer getTypeQuestion() {
         return typeQuestion;
     }
 
-    public void setTypeQuestion(String typeQuestion) {
+    public void setTypeQuestion(Integer typeQuestion) {
         this.typeQuestion = typeQuestion;
     }
 

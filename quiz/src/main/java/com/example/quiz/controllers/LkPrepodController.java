@@ -329,6 +329,10 @@ public class LkPrepodController implements Initializable {
                     Test test = answer.getTests().get(i);
                     containerTests.getChildren().addAll(addNodeForTest(test));
                 }
+                if (containerTests.getChildren().size() == 0) {
+                    errorMessageTab2.setText("Нет созданных тестов");
+                }
+
                 connection.disconnect();
             }
 

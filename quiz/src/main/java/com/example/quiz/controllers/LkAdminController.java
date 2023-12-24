@@ -3,6 +3,7 @@ package com.example.quiz.controllers;
 import com.example.quiz.HelloApplication;
 import com.example.quiz.addElements.AnswerTest;
 import com.example.quiz.addElements.AnswerUserStudents;
+import com.example.quiz.addElements.Role;
 import com.example.quiz.objects.Test;
 import com.example.quiz.objects.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -272,7 +273,7 @@ public class LkAdminController implements Initializable {
         HBox container = new HBox();
         Label er = new Label("");
         VBox containerForLabel = new VBox(new Label("Уникальный номер: " + (userNew.getId() + 135)),
-                new Label("ФИО: " + userNew.getEmail()),new Label("Роль: " + userNew.getRole()),er);
+                new Label("ФИО: " + userNew.getEmail()),new Label("Роль: " + Role.getDescriptionByValue(userNew.getRole())),er);
         Button buttonView = new Button("Подтвердить регистрацию");
         Button buttonReject = new Button("Отклонить регистрацию");
         buttonView.setOnAction(event -> {
@@ -307,6 +308,8 @@ public class LkAdminController implements Initializable {
                     er.setText("Не удалось выполнить запрос");
                 }
             }
+            vBoxTab3.getChildren().clear();
+            refreshTab3();
         });
 
         VBox containerForButton = new VBox(buttonView,buttonReject);
@@ -378,7 +381,7 @@ public class LkAdminController implements Initializable {
         HBox container = new HBox();
         Label er = new Label("");
         VBox containerForLabel = new VBox(new Label("Уникальный номер: " + (userNew.getId() + 135)),
-                new Label("ФИО: " + userNew.getFullName()),new Label("Роль: " + userNew.getRole()),er);
+                new Label("ФИО: " + userNew.getFullName()),new Label("Роль: " + Role.getDescriptionByValue(userNew.getRole())),er);
         Button buttonDelete = new Button("Удалить пользователя");
 
         buttonDelete.setOnAction(eventN -> {
@@ -450,8 +453,8 @@ public class LkAdminController implements Initializable {
                     User newUser = answer.getUsers().get(i);
                     vBoxTab3.getChildren().addAll(addNodeForDelete(newUser));
                 }
-
-                if (vBoxTab2.getChildren().size() == 0) {
+                System.out.println(vBoxTab3.getChildren().size());
+                if (vBoxTab3.getChildren().size() == 0) {
                     errorMessageTab3.setText("Нет пользователей");
                 }
                 connection.disconnect();

@@ -282,6 +282,7 @@ public class LkStudentController implements Initializable {
                     refreshTab2();
                     vBoxTab3.getChildren().clear();
                     refreshTab3();
+
                 });
                 stage.setTitle("Тест");
                 Scene scene = new Scene(fxmlLoader.load(), 500, 450);

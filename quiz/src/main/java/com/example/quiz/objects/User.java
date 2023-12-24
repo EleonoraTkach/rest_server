@@ -8,7 +8,7 @@ public class User {
     private String fullName;
     private String email;
     private String password;
-    private String role;
+    private Integer role;
     private Boolean is_validated;
 
     @JsonCreator
@@ -17,7 +17,7 @@ public class User {
             @JsonProperty("fullName") String fullName,
             @JsonProperty("email") String email,
             @JsonProperty("password") String password,
-            @JsonProperty("role") String role,
+            @JsonProperty("role") Integer role,
             @JsonProperty("is_validated") Boolean is_validated
     ) {
         this.id = id;
@@ -28,28 +28,12 @@ public class User {
         this.is_validated = is_validated;
     }
 
-    public User(Long id, String fullName, String email, String role, String password) {
+    public User(Long id, String fullName, String email, Integer role, String password) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.password = password;
         this.role = role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public void setIs_validated(Boolean is_validated) {
-        this.is_validated = is_validated;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public Boolean getIs_validated() {
-        return is_validated;
     }
 
     public Long getId() {
@@ -72,7 +56,6 @@ public class User {
         return email;
     }
 
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -84,9 +67,32 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public Integer getRole() {
+        return role;
+    }
+
+    public void setRole(Integer role) {
+        this.role = role;
+    }
+
+    public Boolean getIs_validated() {
+        return is_validated;
+    }
+
+    public void setIs_validated(Boolean is_validated) {
+        this.is_validated = is_validated;
+    }
+
     @Override
     public String toString() {
-
-        return this.fullName + " " + this.email+ " " + this.role + " " + this.id + " " + this.password;
+        return "User{" +
+                "id=" + id +
+                ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", is_validated=" + is_validated +
+                '}';
     }
 }

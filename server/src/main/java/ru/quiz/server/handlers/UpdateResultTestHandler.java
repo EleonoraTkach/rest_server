@@ -36,7 +36,7 @@ public class UpdateResultTestHandler implements HttpHandler {
             while ((line = reader.readLine()) != null) {
                 requestBody.append(line);
             }
-
+            System.out.println(requestBody);
             try {
                 String[] newPar = requestBody.toString().split(",");
                 String sql = "SELECT * FROM appoint WHERE id_test = " + Long.parseLong(newPar[0].replaceAll("[^\\d+]",""))
@@ -52,8 +52,11 @@ public class UpdateResultTestHandler implements HttpHandler {
                     Appoint lastApp = list.get(0);
                     System.out.println(lastApp);
                     Appoint appointNew = session.get(Appoint.class, lastApp.getId());
-                    appointNew.setResult(Double.parseDouble(newPar[2].replaceAll("[^\\d+]","")));
+                    System.out.println(newPar[2]);
+                    appointNew.setResult(Double.parseDouble(newPar[2].replaceAll("[^\\d+.\\d+]","")));
+
                     session.update(appointNew);
+                    System.out.println(appointNew);
                     transaction.commit();
                     str = "\"success\"";
                 }

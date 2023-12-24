@@ -1,6 +1,7 @@
 package com.example.quiz.controllers;
 
 import com.example.quiz.HelloApplication;
+import com.example.quiz.addElements.Role;
 import com.example.quiz.objects.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.FXCollections;
@@ -44,7 +45,7 @@ public class LogUpController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ObservableList<String> variants = FXCollections.observableArrayList("Cтудент", "Преподаватель", "Администратор");
+        ObservableList<String> variants = FXCollections.observableArrayList(Role.STUDENT.getDescription(), Role.TEACHER.getDescription(), Role.ADMIN.getDescription());
         role.setItems(variants);
     }
     public String securePassword(String password) {
@@ -78,7 +79,18 @@ public class LogUpController implements Initializable {
                     connection.setRequestMethod("POST");
                     connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                     connection.setDoOutput(true);
-                    String requestBody = "{\"fullName\" : \"" + fioUser + "\", \"email\": \"" + emailUser + "\", \"password\": \"" + securePassword(password1User) + "\", \"role\": \"" + role.getValue() + "\", \"is_validated\": \"" + is_validated + "\"}";
+                    Integer roleNewUser = 0;
+
+                    if (role.getValue().equals(Role.STUDENT.getDescription())) {
+                        roleNewUser = Role.STUDENT.getValue();
+                    } else if (role.getValue().equals(Role.ADMIN.getDescription())) {
+                        roleNewUser = Role.ADMIN.getValue();
+                    } else if (role.getValue().equals(Role.TEACHER.getDescription())){
+                        roleNewUser = Role.TEACHER.getValue();
+                    } else {
+                        errorMessage.setText("Нельзя создать пользователя с такой ролью");
+                    }
+                    String requestBody = "{\"fullName\" : \"" + fioUser + "\", \"email\": \"" + emailUser + "\", \"password\": \"" + securePassword(password1User) + "\", \"role\": \"" + roleNewUser + "\", \"is_validated\": \"" + is_validated + "\"}";
                     try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
                         wr.write(requestBody.getBytes(StandardCharsets.UTF_8));
                     }

@@ -23,7 +23,7 @@
                   <TextField fx:id="login" depthTest="DISABLE" layoutX="195.0" layoutY="76.0" prefHeight="26.0" prefWidth="316.0" />
                   <TextField fx:id="fio" depthTest="DISABLE" layoutX="198.0" layoutY="38.0" prefHeight="26.0" prefWidth="315.0" />
                   <TextField fx:id="type" depthTest="DISABLE" layoutX="195.0" layoutY="119.0" prefHeight="26.0" prefWidth="318.0" text="Преподаватель" />
-                  <Button fx:id="changeButton" layoutX="63.0" layoutY="336.0" mnemonicParsing="false" onAction="#clickOnChangeButton" text="Редактировать профиль" textFill="WHITE" />
+                  <Button fx:id="changeButton" layoutX="63.0" layoutY="336.0" mnemonicParsing="false" onAction="#clickOnChangeButton" text="Редактировать профиль" />
                   <Label fx:id="oldLabel" layoutX="89.0" layoutY="171.0" text="Новый пароль:" />
                   <PasswordField fx:id="newPasswordOne" layoutX="195.0" layoutY="167.0" prefHeight="26.0" prefWidth="316.0" />
                   <Label fx:id="newLabel" layoutX="14.0" layoutY="218.0" text="Повторите пароль ещё раз:" />
@@ -45,7 +45,7 @@
                      </content>
                   </ScrollPane>
                   <Button fx:id="createTestButton" layoutX="477.0" layoutY="359.0" mnemonicParsing="false" onAction="#clickOnCreateTestButton" prefHeight="30.0" prefWidth="143.0" text="Создать тест" />
-                  <Label fx:id="errorMessageTab2" alignment="CENTER" layoutX="63.0" layoutY="23.0" prefHeight="18.0" prefWidth="508.0" textFill="#d11010" />
+                  <Label fx:id="errorMessageTab2" alignment="CENTER" layoutX="63.0" layoutY="23.0" prefHeight="18.0" prefWidth="508.0" />
                   <Button fx:id="refreshButton" layoutX="16.0" layoutY="359.0" mnemonicParsing="false" onAction="#clickOnRefreshButton" prefHeight="30.0" prefWidth="173.0" text="Обновить " />
                </children>
             </AnchorPane>
